@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "417851528656",
+    "firebase_url": "https://fastcut-577a5.firebaseio.com",
+    "project_id": "fastcut-577a5",
+    "storage_bucket": "fastcut-577a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417851528656:android:3a52e66a6e81bb7ef315d5",
+        "android_client_info": {
+          "package_name": "com.wayloo.wayloo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417851528656-a6beoilmfi7fj3nk5543nivnpoes3ot1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wayloo.wayloo",
+            "certificate_hash": "0e277de79f1497f41b25bff9f49639092ecfc4fc"
+          }
+        },
+        {
+          "client_id": "417851528656-kfcjcm7tj5hi6mg1i6n1csjs8j0iu80m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_3CdTnNJ157J4Dzd-s9DvcbfZUMf9MvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417851528656-kfcjcm7tj5hi6mg1i6n1csjs8j0iu80m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

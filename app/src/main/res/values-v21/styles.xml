@@ -1,0 +1,16 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+    <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@color/my_spinner_text_color</item>
+    </style>
+    <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="colorAccent">#6200ea</item>
+        <item name="android:colorControlNormal">#f9a825</item>
+    </style>
+
+</resources>

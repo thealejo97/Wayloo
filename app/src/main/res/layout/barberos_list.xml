@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black_overlay">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imagenBarberoIndividual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_index"></ImageView>
+        <View
+            android:layout_width="10dp"
+            android:layout_height="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                />
+            <TextView
+                android:id="@+id/ReplaceNameP"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textColor="@android:color/white"
+                android:textStyle="bold|italic"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Telefono:      "
+                android:visibility="gone"
+                android:textColor="@android:color/white"
+                android:textStyle="bold|italic"></TextView>
+
+            <TextView
+                android:id="@+id/ReplaceTelP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Tel"
+                android:textColor="@android:color/white"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="Turno:"
+                android:textColor="@android:color/white"
+                android:textStyle="bold|italic"></TextView>
+
+            <TextView
+                android:id="@+id/ReplaceHinicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+
+                android:text="Dir"
+                android:textColor="@android:color/white"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="Hora Finaliza Turno:      "
+                android:textColor="@android:color/white"
+                android:textStyle="bold|italic"></TextView>
+
+            <TextView
+                android:id="@+id/ReplaceHfin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ciu"
+                android:visibility="gone"
+                android:textColor="@android:color/white"></TextView>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Calificación:      "
+                android:visibility="gone"
+                android:textColor="@android:color/white"
+                android:textStyle="bold|italic"></TextView>
+
+            <TextView
+                android:id="@+id/ReplaceCalificacionP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bar"
+                android:visibility="gone"
+                android:textColor="@android:color/white"></TextView>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/white" />
+
+</LinearLayout>

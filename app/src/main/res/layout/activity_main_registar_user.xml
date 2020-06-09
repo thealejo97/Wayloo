@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#000000"
+    android:padding="20px"
+    >
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="307dp"
+                android:layout_height="244dp"
+                android:layout_gravity="center"
+                android:src="@drawable/hexagonalllogo"
+                app:layout_constraintBottom_toTopOf="@+id/etxt_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageViewProfileFoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
+
+            <Button
+                android:id="@+id/buttonImgperfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccione Imagen de perfil" />
+
+            <EditText
+                android:id="@+id/etxt_cellPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:hint="Ingrese su Teléfono celular"
+                android:inputType="phone"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <EditText
+                android:id="@+id/etxt_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:hint="Escriba su nombre"
+                android:inputType="textPersonName"
+                app:layout_constraintBottom_toTopOf="@+id/etxt_lastname"
+                tools:layout_editor_absoluteX="0dp"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <EditText
+                android:id="@+id/etxt_lastname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:hint="Escriba su apellido"
+                android:inputType="textPersonName"
+                app:layout_constraintTop_toBottomOf="@+id/etxt_name"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <EditText
+                android:id="@+id/etxt_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etxt_name"
+                android:layout_centerHorizontal="true"
+                android:hint="Escriba su email"
+                android:inputType="textEmailAddress"
+                app:layout_constraintTop_toTopOf="@+id/etxt_lastname"
+                tools:layout_editor_absoluteX="0dp"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <EditText
+                android:id="@+id/etxt_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etxt_email"
+                android:layout_alignEnd="@+id/etxt_email"
+                android:layout_alignRight="@+id/etxt_email"
+                android:hint="Escriba su password"
+                android:inputType="textPassword"
+                app:layout_constraintTop_toTopOf="@+id/etxt_email"
+                tools:layout_editor_absoluteX="-16dp"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"
+                />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinnerRol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:entries="@array/roles"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"></androidx.appcompat.widget.AppCompatSpinner>
+
+            <TextView
+                android:id="@+id/textViewTituloCiudad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Su ciudad"
+                android:gravity="center"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <Spinner
+                android:textAlignment="center"
+                android:id="@+id/ciudad_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#000000"
+                android:textColorHint="#ffffff"/>
+
+            <EditText
+                android:id="@+id/etxt_CIUDAD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:editable="false"
+                android:visibility="gone"
+
+                android:hint="Escriba la ciudad"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+
+            <TextView
+                android:id="@+id/tituloSeparador"
+                android:text="Seleccione los horarios en los que trabajara"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerRol"
+                android:visibility="gone"
+                android:textColor="#FFFFFF"/>
+
+            <LinearLayout
+                android:id="@+id/linealBarbetoCompleto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff">
+                    <LinearLayout
+                        android:id="@+id/LinealNITverificar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:inputType="number"
+                        android:gravity="center"
+                        >
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/EtxNitPeluqueriaPerteneceBarbero"
+                            android:inputType="number"
+                            android:hint="Nit de su peluqueria"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#ffffff"
+                            android:textColorHint="#ffffff"></EditText>
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:id="@+id/ButtonVerificarNIT"
+                            android:text="Verificar"></Button>
+                    </LinearLayout>
+                    <!-- lINEA INGRESE HORA INICIO DEL BARBERO -->
+                    <LinearLayout
+                        android:id="@+id/LinealBarberoInicio"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        >
+
+                        <EditText
+                            android:id="@+id/et_mostrar_hora_picker_inicio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:editable="false"
+                            android:enabled="false"
+                            android:ems="10"
+                            android:hint="Hora de inicio turno"
+                            android:inputType="time"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#ffffff"
+                            android:textColorHint="#ffffff"/>
+
+                        <ImageButton
+                            android:id="@+id/ib_obtener_hora_inicio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/ic_access_time_white_24dp"
+                            tools:ignore="ContentDescription"
+
+                            />
+
+                    </LinearLayout>
+                    <!-- lINEA INGRESE HORA FIN DEL BARBERO -->
+                    <LinearLayout
+                        android:id="@+id/LinealBarberoFin"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+
+                            >
+
+                        <EditText
+                            android:id="@+id/et_mostrar_hora_picker_fin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:editable="false"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:hint="Hora de fin del turno"
+                            android:inputType="time"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:backgroundTint="#FFFFFF"
+                            android:textColor="#ffffff"
+                            android:textColorHint="#ffffff"/>
+
+                        <ImageButton
+                            android:id="@+id/ib_obtener_hora_fin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/ic_access_time_white_24dp"
+                           />
+                    </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    >
+                    <View
+                        android:layout_width="7dp"
+                        android:layout_height="2dp" />
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/white" />
+                    <View
+                        android:layout_width="7dp"
+                        android:layout_height="2dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/whiteText"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textSize="20dp"
+                        android:text="Seleccione Los dias en que NO labora"></TextView>
+                    <HorizontalScrollView
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content">
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <TableRow
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content">
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:shadowColor="@color/whiteText"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chLunes"></CheckBox>
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chMartes"></CheckBox>
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chMiercoles"></CheckBox>
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chJueves"></CheckBox>
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chViernes"></CheckBox>
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chSabado"></CheckBox>
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:buttonTint="@color/whiteText"
+                            android:id="@+id/chDomingo"></CheckBox>
+                        </TableRow>
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/whiteText"
+                            android:text="Lunes  "></TextView>
+                        <TextView
+                            android:textColor="@color/whiteText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Martes  "></TextView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/whiteText"
+                            android:layout_height="wrap_content"
+                            android:text="Miercoles  "></TextView>
+                        <TextView
+                            android:textColor="@color/whiteText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Jueves  "></TextView>
+                        <TextView
+                            android:textColor="@color/whiteText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Viernes  "></TextView>
+                        <TextView
+                            android:textColor="@color/whiteText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sabado  "></TextView>
+                        <TextView
+                            android:textColor="@color/whiteText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Domingo  "></TextView>
+
+                        </TableRow>
+
+                    </TableLayout>
+</HorizontalScrollView>
+                </LinearLayout>
+            </LinearLayout>
+            <!-- lINEA ADMINISTRADOR PARA QUE INGRESE EL NOMBRE DE SU PELUQUERIA -->
+            <LinearLayout
+                android:id="@+id/LinealAdministrador"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                >
+
+                <EditText
+                    android:id="@+id/etxt_PeluqueriaNit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Escriba el NIT de su peluqueria."
+                    android:backgroundTint="#FFFFFF"
+                    android:inputType="number"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#ffffff"/>
+
+                <EditText
+                    android:id="@+id/etxt_PeluqueriaNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Escriba el nombre de su peluqueria."
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#ffffff"
+                    />
+                <EditText
+                    android:id="@+id/etxt_peluqueriaDireccion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Escriba la direccion de la peluqueria"
+                    android:backgroundTint="#FFFFFF"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#ffffff"
+                    />
+                <EditText
+                    android:id="@+id/etxt_PeluqueriaTelefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Escriba el telefono de su peluqueria."
+                    android:backgroundTint="#FFFFFF"
+                    android:inputType="number"
+                    android:textColor="#ffffff"
+                    android:textColorHint="#ffffff"
+                    />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_register"
+                android:layout_width="121dp"
+                android:layout_height="55dp"
+                android:layout_below="@id/ib_obtener_hora_inicio"
+                android:layout_marginTop="36dp"
+                android:text="Registrar"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_mostrar_hora_picker_fin"
+                android:background="@drawable/shapes"/>
+
+            <TextView
+                android:id="@+id/txt_backlogin"
+                android:layout_width="146dp"
+                android:layout_height="42dp"
+                android:layout_below="@id/btn_register"
+                android:layout_marginTop="32dp"
+                android:text="O inicia sesion aqui"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_register"
+                android:layout_gravity="center"
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#ffffff"
+                android:textColorHint="#ffffff"/>
+        </LinearLayout>
+    </ScrollView>

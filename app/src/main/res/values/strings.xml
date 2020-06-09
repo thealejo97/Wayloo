@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">WayLoo</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="iniciar_sesión">Iniciar sesión</string>
+    <string name="facebook_app_id">471975723713364</string>
+    <string name="fb_login_protocol_scheme">fb471975723713364</string>-
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Usuario</string>
+    <string name="nav_header_subtitle">user@wayloo.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Inicio</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_perfil">Perfil</string>
+    <string name="Compartir">Compartir</string>
+    <string name="menu_send">Send</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="peluqeriasDisponibles">Peluquerias Disponibles</string>
+    <string name="api_maps">AIzaSyBEjjGRHm37tpR6lkcLeGv6mPGqVZalc9Y</string>
+
+    <!-- EDIT TEXTS-->
+    <string name="Nombre">Nombre</string>
+    <string name="Apellido">Apellido</string>
+    <string name="Dirección">Dirección</string>
+    <string name="Teléfono">Teléfono</string>
+    <string name="Ciudad">Ciudad</string>
+    <string name="Contraseña">Contraseña</string>
+    <string name="ContraseñaNueva">Contraseña nueva</string>
+    <string name="Registrar">Registrar</string>
+    <string name="Verificar">Registrar</string>
+    <string name="NIT">NIT</string>
+    <string name="h_inicio">Hora Inicio Turno</string>
+    <string name="h_fin">Hora Fin Turno</string>
+    <string name="Seleccione_Imagen">Seleccione Imagen</string>
+    <string name="CambiarFotoPerfil">Cambiar foto de perfil</string>
+
+
+    <!-- TEXTOS INTERNOS -->
+    <string name="texto_CompletarFormulario">Por favor rellena la información para completar el tu registro:</string>
+    <string name="texto_SeleccioneHorarioReserva">Horario:</string>
+    <string name="texto_BuscarPorFecha">Selecciona una fecha para consultar disponibilidad:</string>
+    <string name="texto_ToqueSeleccionFechaBusqueda">Toca para seleccionar la fecha</string>
+    <string name="text_perfil">Edite los campos y presione actualizar para actualizar su información</string>
+
+
+    <!-- TITULOS -->
+    <string name="titulo_dialogoRegistrar">Reserva tu cita</string>
+    <string name="titulo_perfil">Mi perfil</string>
+
+
+    <!-- SEPARADORES -->
+
+    <string name="separador_CompletarFormulario">Por favor complete la información para finalizar el registro:</string>
+
+
+    <!-- SPINNERS ARRAYS -->
+    <string-array name="roles">
+        <item>Seleccione su rol</item>
+        <item>Administrador</item>
+        <item>Barbero</item>
+        <item>Cliente</item>
+    </string-array>
+
+    <string-array name="ciudades">
+        <item>Cali</item>
+        <item>Jamundi</item>
+    </string-array>
+
+    <string-array name="citys_array">
+        <item>Cali</item>
+        <item>Jamundi</item>
+    </string-array>
+
+    <string-array name="rols">
+        <item>Administrador</item>
+        <item>Barbero</item>
+        <item>Cliente</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mis_peluquerias">Mis Peluquerias</string>
+    <string name="mis_barberias">Mis Barberias</string>
+    <string name="olvide_mi_contrase_a">Olvide mi contraseña</string>
+    <string name="mis_reservas">Mis Reservas</string>
+    <string name="mi_cronograma">Mi Cronograma</string>
+    <string name="ip_way">http://wayloo.000webhostapp.com</string>
+</resources>

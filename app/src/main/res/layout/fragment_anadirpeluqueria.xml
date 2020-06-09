@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/backGroudMain"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:id="@+id/LinealAdministrador"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:id="@+id/imageViewPrincipalFotoB"
+            android:layout_width="150dp"
+            android:layout_gravity="center"
+            android:layout_height="150dp"
+            tools:srcCompat="@drawable/ic_logor" />
+        <EditText
+            android:id="@+id/etxt_PeluqueriaNitAnadir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="Escriba el NIT de su peluqueria."
+            android:inputType="number"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
+
+        <EditText
+            android:id="@+id/etxt_PeluqueriaNombreAnadir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="Escriba el nombre de su peluqueria."
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
+
+        <EditText
+            android:id="@+id/etxt_peluqueriaDireccionAnadir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="Escriba la direccion de la peluqueria"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
+
+        <EditText
+            android:id="@+id/etxt_PeluqueriaTelefonoAnadir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:hint="Escriba el telefono de su peluqueria."
+            android:inputType="number"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
+        <Spinner
+            android:id="@+id/ciudad_spinnerAnadir"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FFFFFF"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff"
+
+            />
+        <Button
+            android:id="@+id/btnAnadirPeluqueria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Añadir peluqueria "
+            android:layout_gravity="center"
+            android:background="@drawable/shapes"></Button>
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

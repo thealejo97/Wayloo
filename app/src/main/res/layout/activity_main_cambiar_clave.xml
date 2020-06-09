@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivityCambiarClave"
+    android:background="@color/backGroudMain"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:padding="30dp">
+
+
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_logo"
+        ></ImageView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ingrese su correo para solicitar cambio de contraseña:"
+        android:textColor="@color/whiteText"/>
+    <EditText
+        android:id="@+id/editTextCorreo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_email"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/whiteText"
+        />
+    <Button
+        android:id="@+id/buttonCambiarClave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Actualizar"
+        android:background="@drawable/shapes"/>
+
+</LinearLayout>
+
+

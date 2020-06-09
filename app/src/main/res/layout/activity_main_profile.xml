@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivityZoomPeluquero"
+    android:background="@color/backGroudMain"
+    android:padding="30px">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/textViewTituPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/titulo_perfil"
+                android:textColor="@color/whiteText"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+            android:id="@+id/imageViewPrincipalFotoPerfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            tools:srcCompat="@drawable/ic_logor" />
+
+            <TextView
+                android:id="@+id/textViewTituCambiar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/CambiarFotoPerfil"
+                android:textColor="@color/whiteText" />
+
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilTel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Teléfono"
+                    android:textColor="@color/whiteText"
+                    android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/TelBarSPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Telefono"
+                android:textColor="@color/whiteText"></EditText>
+
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Nombre"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+            <EditText
+                android:id="@+id/NomBarSPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre"
+                android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilApellido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Apellido"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+                <EditText
+                    android:id="@+id/ApellBarSPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Apellido"
+                    android:textColor="@color/whiteText"></EditText>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+
+                    <EditText
+                    android:id="@+id/PasswordPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                        android:shadowColor="@color/colorPrimary"
+
+                        android:layout_weight="25"
+                        android:layout_gravity="left"
+                    android:inputType="textPassword"
+                    android:text="Password"
+                    android:textColor="@color/whiteText"></EditText>
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="100dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="0"
+                        android:layout_gravity="left"
+                         />
+
+
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/textViewTituPerfilEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_email"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+
+                <EditText
+                android:id="@+id/emailPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilCiudad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Ciudad"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+            <EditText
+                android:id="@+id/CiudadPerfil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ciudad"
+                android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilRol"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="rol"
+                    android:visibility="gone"
+                    android:textColor="@color/whiteText" />
+            <EditText
+                android:id="@+id/rolPerfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rol"
+                android:visibility="gone"
+                android:textColor="@color/whiteText"></EditText>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/txtTituHabilitarModo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/whiteText"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:text="Habilitar modo barbero                                     "></TextView>
+
+                    <CheckBox
+                        android:layout_weight="0"
+                        android:id="@+id/checkBoxModoBarbero"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:buttonTint="@color/whiteText"
+                        android:gravity="center"
+                        android:hint="@color/colorAccent"
+                        android:text="CheckBox" />
+                </LinearLayout>
+
+
+        </LinearLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_width="1dp"
+                android:layout_height="30dp"
+                android:layout_weight="0"
+                android:layout_gravity="left"
+                />
+            <TextView
+                android:id="@+id/textViewCambiarContra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Restablecer Contraseña"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="@color/whiteText" />
+            <View
+            android:id="@+id/view2683"
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:layout_weight="0"
+            android:layout_gravity="left"
+            />
+                <Button
+                    android:id="@+id/editarButonPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/shapes"
+                    android:text="    Actualizar Perfil    " />
+            <View
+                android:id="@+id/view263"
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_weight="0"
+                android:layout_gravity="left"
+                />
+            <Button
+                android:id="@+id/editarButonEliminarPerfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/shapesred"
+                android:text="    Eliminar Perfil    " />
+
+
+        </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>

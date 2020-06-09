@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.editarreservas.fragment_editar_reserva"
+    android:background="@color/backGroudMain"
+    android:padding="20dp"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ImageReservaBarberoEditar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:src="@drawable/notfouduser" />
+    <TextView
+        android:id="@+id/NombreBarReservaEditar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Nombre"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center">
+    </TextView>
+    <TextView
+        android:id="@+id/FechaReservaEditar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FechaResrva"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center">
+    </TextView>
+    <TextView
+        android:id="@+id/horaReservaEditar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hora"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center">
+    </TextView>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        />
+
+    <Button
+        android:id="@+id/btnActualizarReserva"
+        android:padding="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="    Actualizar    "
+        android:visibility="gone"
+        android:background="@drawable/shapes"
+        android:layout_gravity="center"></Button>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        />
+    <Button
+        android:id="@+id/btnEliminarReserva"
+    android:padding="15dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="    Eliminar    "
+    android:background="@drawable/shapesred"
+    android:layout_gravity="center"></Button>
+</LinearLayout>
+</ScrollView>

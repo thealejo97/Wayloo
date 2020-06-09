@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    android:background="@color/backGroudMain"
+    android:id="@+id/menuLateral">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/inicio_navbar"
+            android:title="Barberias" />
+
+        <item
+            android:id="@+id/nav_perfil"
+            android:icon="@drawable/ic_person"
+            android:title="@string/menu_perfil" />
+
+
+        <item
+            android:id="@+id/nav_mis_peluquerias"
+            android:icon="@drawable/lista"
+            android:title="@string/mis_peluquerias" />
+
+        <item
+            android:id="@+id/nav_mis_reservas"
+            android:icon="@drawable/ic_check"
+            android:title="@string/mis_reservas" />
+        <item
+            android:id="@+id/nav_mi_cronograma"
+            android:icon="@drawable/ic_calendar"
+            android:title="@string/mi_cronograma" />
+
+    </group>
+    <group android:checkableBehavior="single">
+    <item android:title="Comunicar"
+        android:iconTint="@color/whiteText">
+
+
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/Compartir" />
+            <item
+                android:id="@+id/cerrar_s"
+                android:icon="@drawable/cerrar_sesion_logo"
+                android:title="Cerrar Sesión" />
+
+    </item>
+    </group>
+
+</menu>

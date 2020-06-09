@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/black_overlay"
+    android:padding="20dp"
+    tools:ignore="MissingDefaultResource">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/textViewTituPerfilBarbCarte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Mi Barberia"
+                android:textColor="@color/whiteText"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilNIT"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/NIT"
+                    android:textColor="@color/whiteText"
+                    android:textStyle="bold"/>
+
+                <EditText
+                    android:tag="EtNitBarberEditar"
+                    android:id="@+id/editTextNITEditarbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/NIT"
+                    android:textColor="@color/whiteText"></EditText>
+
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Nombre"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+                <EditText
+                    android:tag="EtNombreEdit"
+                    android:id="@+id/NomBarEditar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre"
+                    android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituTelEditar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Teléfono"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+                <EditText
+                    android:id="@+id/TelBarEditar"
+                    android:tag="EtTelEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Teléfono"
+                    android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituDireccionEditar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Dirección"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+
+
+                    <EditText
+                        android:tag="EtDirEdit"
+                        android:id="@+id/EtDireccionEditar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:shadowColor="@color/colorPrimary"
+                        android:text="@string/Dirección"
+                        android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilCiudad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Ciudad"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText" />
+                <EditText
+                    android:tag="EtCiudadEdit"
+                    android:id="@+id/CiudadPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ciudad"
+                    android:textColor="@color/whiteText"></EditText>
+
+                <TextView
+                    android:id="@+id/textViewTituPerfilRol"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="rol"
+                    android:visibility="gone"
+                    android:textColor="@color/whiteText" />
+                <EditText
+                    android:id="@+id/rolPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rol"
+                    android:visibility="gone"
+                    android:textColor="@color/whiteText"></EditText>
+
+
+            </LinearLayout>
+            <View
+                android:id="@+id/view"
+                android:layout_width="1dp"
+                android:layout_height="30dp"
+                android:layout_weight="0"
+                android:layout_gravity="left"
+                />
+
+            <Button
+                android:id="@+id/editarButonBarber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/shapes"
+                android:text="    Actualizar Barberia    " />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="1dp"
+                android:layout_height="20dp"
+                android:layout_weight="0"
+                android:layout_gravity="left"
+                />
+            <Button
+                android:id="@+id/eliminarButonBarber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/shapesred"
+                android:text="    Eliminar Barberia    " />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

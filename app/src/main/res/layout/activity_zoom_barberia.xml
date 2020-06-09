@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".zoomBarberia"
+    android:background="@color/backGroudMain"
+    android:padding="20px">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="146dp"
+        android:layout_height="80dp"
+        app:srcCompat="@drawable/tijeras"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/textViewNombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:textSize="28dp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/textViewTel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tel"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center"
+ />
+    <TextView
+        android:id="@+id/textViewCiudadP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center"
+        />
+    <TextView
+        android:textColor="@color/whiteText"
+        android:id="@+id/textViewDireccion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dir"
+        android:layout_gravity="center"
+        />
+    <RatingBar
+        style="?android:attr/ratingBarStyleIndicator"
+        android:id="@+id/ratingBarBarberia"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:colorControlNormal="@color/whiteText"
+        android:numStars="5"
+        android:rating="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:textColor="@color/whiteText"
+        android:id="@+id/textViewEstrellas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Caificaciones"
+        android:layout_gravity="center"
+        />
+
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Barberos disponibles"
+        android:textSize="20sp"
+        android:id="@+id/tituBarberosDisponibles"
+        android:textColor="@android:color/white"></TextView>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="10dp"
+        />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/white"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/idRecycleBarber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@android:color/white">
+    </androidx.recyclerview.widget.RecyclerView>
+
+
+
+</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
