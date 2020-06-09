@@ -83,10 +83,11 @@ public class MainLogginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        //AppEventsLogger.activateApp(this);
         setContentView(R.layout.activity_main_loggin);
 
         if(verificarIniciadoSesion()){//Verifica que ya no haya iniciado sesion
+            //Si ya existe el usuario interno
+            //Vaya directamente a MainActivity
             Intent intent = new Intent(MainLogginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -94,15 +95,18 @@ public class MainLogginActivity extends AppCompatActivity {
 
             //Iniciamos la sesion Sin Facebook
             btnIniciarSesion=findViewById(R.id.buttonLogginNomal);
+            btnRestablecer = findViewById(R.id.tvRestablecerContra);
+            loginButton = findViewById(R.id.buttonLoggin);
+            etusu = findViewById(R.id.editUsuarioLoggin);
+            etpw= findViewById(R.id.editTextPasswordLogin);
+            txtRegistar = (TextView) findViewById(R.id.textViewRegistrar);
+            /////////////////////////////////////////////// cuando doy click en iniciar sesion ///////////////////////////////////////////////
             btnIniciarSesion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    etusu = findViewById(R.id.editUsuarioLoggin);
-                    etpw= findViewById(R.id.editTextPasswordLogin);
-                    showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
-                    //iniciarSesionUsuarioNormal(etusu.getText().toString(),etpw.getText().toString());
+
+
                     verificarUsuarioYaEsteRegistrado(etusu.getText().toString());
-                    //verificarUsuarioRegistrado(etusu.getText().toString(),etpw.getText().toString());
 
                 }
             });
@@ -113,9 +117,9 @@ public class MainLogginActivity extends AppCompatActivity {
             mAuth = FirebaseAuth.getInstance();
             //mDatabase = FirebaseDatabase.getInstance().getReference();
             firebaseAuth = FirebaseAuth.getInstance();
-            btnRestablecer = findViewById(R.id.tvRestablecerContra);
+
             callbackManager = CallbackManager.Factory.create();
-            loginButton = findViewById(R.id.buttonLoggin);
+
             loginButton.setReadPermissions("email", "public_profile");//user_status, publish_actions..
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
@@ -141,8 +145,6 @@ public class MainLogginActivity extends AppCompatActivity {
                 }
             });
 
-            //Cambiar a menu registrar
-            txtRegistar = (TextView) findViewById(R.id.textViewRegistrar);
 
             txtRegistar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -166,28 +168,35 @@ public class MainLogginActivity extends AppCompatActivity {
 
     private void iniciarSesionUsuarioNormal(final String telIngresado, String pswIngresado, final String emaildeEseTelefon, final String IDDEFIRE,
                                             final String nombre_USU, final String rol_Usu) {
-
-        mAuth = FirebaseAuth.getInstance();
-        Log.e("Finalizando Inicio", "Finalizando");
+        //Inicio la sesion con el correo que obtuvimos
+        mAuth = FirebaseAuth.getInstance();// Creo el usuario firebase
+        //Inicio sesion con el correo y la clave
 
         mAuth.signInWithEmailAndPassword(emaildeEseTelefon, pswIngresado)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            hideProgressDialog();
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.e("log fireb", "signInWithEmail:success");
-                            salvarPermanente(IDDEFIRE, nombre_USU, emaildeEseTelefon, rol_Usu, telIngresado);
-                            //updateIU();
-                        } else {
-                            hideProgressDialog();
-                            // If sign in fails, display a message to the user.
-                            Log.e("log fireb E", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainLogginActivity.this, "Usuario o contraseña erroneas.",
-                                    Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+
+                            if (task.isSuccessful()) {
+                                if(!mAuth.getCurrentUser().isEmailVerified()){
+                                    //Verificar que el usuario ya haya verificado su email
+                                    Toast.makeText(MainLogginActivity.this, "Error debe de verificar su usuario revise su email", Toast.LENGTH_LONG).show();
+                                    mAuth.getInstance().signOut();
+                                }else {
+                                    //Si es validao
+                                    hideProgressDialog();
+                                    Log.e("login fireb", "signInWithEmail:success");
+                                    salvarPermanente(IDDEFIRE, nombre_USU, emaildeEseTelefon, rol_Usu, telIngresado);
+                                }
+                            } else {
+                                hideProgressDialog();
+                                // If sign in fails, display a message to the user.
+                                Log.e("log fireb E", "signInWithEmail:failure", task.getException());
+                                Toast.makeText(MainLogginActivity.this, "Usuario o contraseña erroneas.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
                 });
 
       /*  Utilidades tl = new Utilidades();
@@ -293,39 +302,39 @@ public class MainLogginActivity extends AppCompatActivity {
     }
 
     private void verificarUsuarioYaEsteRegistrado(final String telIngresadoVerificar) {
+        //Verifico el usuario existe 000Webhost
+        //Relaciono el IDFirebase con el telefono que ingrese y miro si existe
+        showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
         request = Volley.newRequestQueue(getApplicationContext());
 
         String ip =getString(R.string.ip_way);
-
         String url = ip + "/consultas/verificarUsuarioYaEstaRegistrado.php?";
-
         Log.e("URL DEL POST", url);
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.e("Response ", response);
                 if (response.equalsIgnoreCase("NoEncontrado[]")) {
-                    hideProgressDialog();
-                    Toast.makeText(MainLogginActivity.this, "Error Usuario No encontrado", Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();// Oculto el dialog
+                    Toast.makeText(MainLogginActivity.this, "Error Usuario No encontrado", Toast.LENGTH_SHORT).show();// Usuario Telefono no encontrado
                 } else {
-                    JSONObject jsonObject = null;
                     try {
+                        //Recibo los datos del usuario que tiene ese telefono
                         String emaildeEseTelefon=null;
                         String rol_u = null;
                         String nombre_u = null;
                         String IDFIre_u = null;
-                        jsonObject = new JSONObject(response.toString());
+                        JSONObject jsonObject = new JSONObject(response.toString());
                         JSONArray json = jsonObject.getJSONArray("already");
                         for (int i = 0; i < json.length(); i++) {
-                            JSONObject jsonObject2 = null;
-                            jsonObject2 = json.getJSONObject(i);
-                            IDFIre_u = jsonObject2.optString("id_firebase");
-                            nombre_u = jsonObject2.optString("nombre_usuario");
-                            emaildeEseTelefon = jsonObject2.optString("email_usuario");
-                            rol_u = jsonObject2.optString("rol_usuario");
-
+                            JSONObject jsonObject2 = json.getJSONObject(i); // Creo un objeto con cada uno de los usuarios que trae
+                            IDFIre_u = jsonObject2.optString("id_firebase");// Saco el dato de la fila
+                            nombre_u = jsonObject2.optString("nombre_usuario");// Saco el dato de la fila
+                            emaildeEseTelefon = jsonObject2.optString("email_usuario");// Saco el dato de la fila
+                            rol_u = jsonObject2.optString("rol_usuario");// Saco el dato de la fila
                         }
-
+                        //ahora si inicio la sesion con la contraseña
                         iniciarSesionUsuarioNormal(etusu.getText().toString(), etpw.getText().toString(),emaildeEseTelefon,IDFIre_u,nombre_u,rol_u);
 
                     } catch (JSONException e) {
@@ -541,14 +550,15 @@ public class MainLogginActivity extends AppCompatActivity {
     private void  hideProgressDialog(){progress.dismiss();}
 
     private boolean verificarIniciadoSesion(){
-        boolean iniciado= false;
+        boolean iniciado= false;// Si ya esta iniciado
+        //SQLITE
         SQLiteDatabase db = usdbh.getWritableDatabase();
-        Cursor c = db.rawQuery(" SELECT id_firebase FROM CurrentUsuario;", null);
+        Cursor c = db.rawQuery(" SELECT id_firebase FROM CurrentUsuario;", null);// Si ya existe almenos una fila en la bdsqlite
         if (c.moveToFirst()) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 id_firebase= c.getString(0);
-                iniciado = true;
+                iniciado = true;// Iniciado vale true
             } while(c.moveToNext());
         }
         if(id_firebase != null){

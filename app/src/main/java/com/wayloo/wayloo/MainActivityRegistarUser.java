@@ -163,17 +163,9 @@ public class MainActivityRegistarUser extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         ///////////////////////////////////////////////////////////////// Views ///////////////////////////////////////////////////////////////
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_registar_user);
-
-/*
-        spinner = findViewById(R.id.spinnerRol);
-        ArrayAdapter adapterA = ArrayAdapter.createFromResource(this,
-                R.array.roles, R.layout.color_spinner_layout);
-        adapterA.setDropDownViewResource(R.layout.spinner_dropdown);
-        spinner.setAdapter(adapterA);*/
 
         //Referenciamos los objetos
         mAuth = FirebaseAuth.getInstance();// Crea la instancia de Firebase
@@ -188,6 +180,7 @@ public class MainActivityRegistarUser extends AppCompatActivity {
         etPassword = findViewById(R.id.etxt_password); // Clave
         spinnerCiudad = (Spinner) findViewById(R.id.ciudad_spinner); //Spinner ciudad
         regresarLogin = findViewById(R.id.txt_backlogin);// Texto que al presionar vuelve atras
+        btnRegistrar = findViewById(R.id.btn_register);
 
         /////////////////////////////////////////////////  PARA SELECCIONAR LA IMAGEN /////////////////////////////////////////////////
 //Cuando se presiona click en el burronImage picker ejecuto mostrar dialogo
@@ -202,7 +195,7 @@ public class MainActivityRegistarUser extends AppCompatActivity {
         });
 
         ///////////////////////////////////////////////// CLICK PARA REGISTRARSE /////////////////////////////////////////////////
-        btnRegistrar = findViewById(R.id.btn_register);
+
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -470,15 +463,15 @@ Log.e("Prueba", prueba);
                 Log.e("RESPUESTA SQL: ", "" + response); // imprimo la respuesta
                 // Si la respuesta del web service es que guardo
                 if (response.trim().equalsIgnoreCase("registrado")) {
+
+                    Toast.makeText(MainActivityRegistarUser.this, "Verifique su correo para validar su usuario", Toast.LENGTH_SHORT).show();
                     //Guardo los datos en sqlite
-                    salvarPermanente();
-                   /*
+               //     salvarPermanente();
+
                     //Ya inicio sesion entonces paso al Mainactivity
-                    Intent intent = new Intent(MainActivityRegistarUser.this, MainActivity.class);
-                    hideProgressDialog(); //Oculto el progressbar
-                    Toast.makeText(MainActivityRegistarUser.this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivityRegistarUser.this, MainLogginActivity.class);
                     startActivity(intent);
-                    finish();*/
+                    finish();
                 } else {
                     //Si la respuesta del web service es error, no se pudo escribir en la 000webhost, entonces lo borro del fire
                     try {
