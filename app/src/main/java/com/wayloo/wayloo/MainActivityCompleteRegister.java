@@ -512,7 +512,7 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
             Log.e("Datos en fb",  "Fetch faild" );
             Toast.makeText(MainActivityCompleteRegister.this, "Fetch failed",
                     Toast.LENGTH_SHORT).show();
-        });
+        }); //Versionador
 
         String prueba= (String)firebaseRemoteConfig.getString("ciudadesAc");
         Log.e("Prueba", prueba);

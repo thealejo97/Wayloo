@@ -263,7 +263,7 @@ public class MainActivityRegistarUser extends AppCompatActivity {
                     mostrarDialogOpciones();
                 }
             }
-        });
+        }); // versiones
 
 
         ///////////////////////////////////////////////// PARA VERIFICAR EL NIT (EN CASO DE QUE SEA BARBERO) /////////////////////////////////////////////////
