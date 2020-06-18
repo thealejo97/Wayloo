@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class UsuariosSQLiteHelper extends SQLiteOpenHelper {
 
     //Sentencia SQL para crear la tabla de Usuarios
-    String sqlCreate = "CREATE TABLE CurrentUsuario (id_firebase TEXT, nombre TEXT,email TEXT,completeRegistred TEXT, rol INTEGER, id_usu TEXT)";
+    String sqlCreate = "CREATE TABLE CurrentUsuario (id_firebase TEXT, nombre TEXT,email TEXT, rol INTEGER, id_usu TEXT)";
 
     public UsuariosSQLiteHelper(Context contexto, String nombre,
                                 CursorFactory factory, int version) {

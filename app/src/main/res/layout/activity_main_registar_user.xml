@@ -106,15 +106,6 @@
                 android:textColorHint="#ffffff"
                 />
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/spinnerRol"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#FFFFFF"
-                android:entries="@array/roles"
-                android:textAlignment="center"
-                android:textColor="#ffffff"
-                android:textColorHint="#ffffff"></androidx.appcompat.widget.AppCompatSpinner>
 
             <TextView
                 android:id="@+id/textViewTituloCiudad"

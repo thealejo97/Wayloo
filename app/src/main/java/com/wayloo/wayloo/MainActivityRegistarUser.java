@@ -206,7 +206,6 @@ public class MainActivityRegistarUser extends AppCompatActivity {
                 email = etEmail.getText().toString();
                 Password = etPassword.getText().toString();
                 miCiudad = spinnerCiudad.getSelectedItem().toString();
-                //No inicializo la ciudad ya que se selecciona dependiendo de la ubicacion
 
                 if (name.isEmpty() || lastname.isEmpty() || cellphone.isEmpty() || email.isEmpty() || Password.isEmpty()) {
                     Toast.makeText(MainActivityRegistarUser.this, "Error los campos no deben de estar vacios.", Toast.LENGTH_SHORT).show();

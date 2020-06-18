@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +31,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.google.api.AuthProvider;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuthProvider;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.SignInMethodQueryResult;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -55,18 +65,17 @@ public class MainLogginActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private FirebaseAuth firebaseAuth;
     private TextView txtRegistar;
-    private LoginButton logoutButton;
     private LoginButton loginButton;
     private EditText etusu;
     private EditText etpw;
-    //Datos para la DB externa
-    private RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
-    private ImageView imageViewLogomini;
 
+    String emaildeEseTelefon=null;
+    String rol_u = null;
+    String nombre_u = null;
+    String IDFIre_u = null;
     private String id_firebase;
-    private String nombre_fb;
-    private String email_fb;
+    private String nombre_fb; // Es el nombre del usuario de facebook
+    private String email_fb;// Es el email del usuario de facebook
     private Button btnIniciarSesion;
 
     //Creamos la BD
@@ -74,6 +83,7 @@ public class MainLogginActivity extends AppCompatActivity {
             new UsuariosSQLiteHelper(MainLogginActivity.this, "dbUsuarios", null, 1);
     //Firebase user
     FirebaseAuth mAuth;
+    private RequestQueue request;
 
     ProgressDialog progress;
     private TextView btnRestablecer;
@@ -84,6 +94,8 @@ public class MainLogginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main_loggin);
+        //Referenciamos los objetos
+        mAuth = FirebaseAuth.getInstance();
 
         if(verificarIniciadoSesion()){//Verifica que ya no haya iniciado sesion
             //Si ya existe el usuario interno
@@ -104,7 +116,7 @@ public class MainLogginActivity extends AppCompatActivity {
             btnIniciarSesion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    //Va y busca el email con el telefono proporcionado
 
                     verificarUsuarioYaEsteRegistrado(etusu.getText().toString());
 
@@ -112,28 +124,47 @@ public class MainLogginActivity extends AppCompatActivity {
             });
 
 
-
-            //Referenciamos los objetos
-            mAuth = FirebaseAuth.getInstance();
-            //mDatabase = FirebaseDatabase.getInstance().getReference();
-            firebaseAuth = FirebaseAuth.getInstance();
-
             callbackManager = CallbackManager.Factory.create();
 
             loginButton.setReadPermissions("email", "public_profile");//user_status, publish_actions..
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    mAuth = FirebaseAuth.getInstance();
-                    ProgressDialog progress;
 
-                        showProgressDialog("Éxito", "..");
-                        handleFacebookAccessToken(loginResult.getAccessToken());
+
+
+                    //Getting the user information
+                    GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            // Application code
+                            Log.e("usuario obtenido", "onCompleted: response: " + response.toString());
+                            try {
+                                email_fb = object.getString("email");
+                                nombre_fb = object.getString("name");
+
+                                Log.e("El usuario obtenido es", "onCompleted: Email: " + email_fb);
+                                Log.e("El usuario obtenido es", "onCompleted: Birthday: " + nombre_fb);
+
+
+                                handleFacebookAccessToken(loginResult.getAccessToken());
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Log.e("El usuario obtenido es", "onCompleted: JSON exception");
+                            }
+                        }
+                    });
+
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,email,gender,birthday");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+
+
+
 
                     }
-
-
-
                 @Override
                 public void onCancel() {
                     Toast.makeText(MainLogginActivity.this, "Inicio cancelado", Toast.LENGTH_SHORT).show();
@@ -169,23 +200,23 @@ public class MainLogginActivity extends AppCompatActivity {
     private void iniciarSesionUsuarioNormal(final String telIngresado, String pswIngresado, final String emaildeEseTelefon, final String IDDEFIRE,
                                             final String nombre_USU, final String rol_Usu) {
         //Inicio la sesion con el correo que obtuvimos
-        mAuth = FirebaseAuth.getInstance();// Creo el usuario firebase
+//        mAuth = FirebaseAuth.getInstance();// Creo el usuario firebase
         //Inicio sesion con el correo y la clave
-
         mAuth.signInWithEmailAndPassword(emaildeEseTelefon, pswIngresado)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         hideProgressDialog();
-
+                            Log.e("Choco error", task.getException()+" "+ task.toString());
                             if (task.isSuccessful()) {
+                                Log.e("Mauth desde arriba2", "-"+mAuth.getCurrentUser().toString()+"-");
+                                //Si el correo y la clave estan ok, entonces verifico que la cuenta este verifica
                                 if(!mAuth.getCurrentUser().isEmailVerified()){
                                     //Verificar que el usuario ya haya verificado su email
                                     Toast.makeText(MainLogginActivity.this, "Error debe de verificar su usuario revise su email", Toast.LENGTH_LONG).show();
                                     mAuth.getInstance().signOut();
                                 }else {
                                     //Si es validao
-                                    hideProgressDialog();
                                     Log.e("login fireb", "signInWithEmail:success");
                                     salvarPermanente(IDDEFIRE, nombre_USU, emaildeEseTelefon, rol_Usu, telIngresado);
                                 }
@@ -198,112 +229,12 @@ public class MainLogginActivity extends AppCompatActivity {
                             }
                         }
                 });
-
-      /*  Utilidades tl = new Utilidades();
-        pswIngresado=tl.Encriptar(pswIngresado);
-        final String finalPswIngresado = pswIngresado;
-
-            request = Volley.newRequestQueue(getApplicationContext());
-
-            String ip = getString(R.string.ip);
-
-            String url = ip + "/consultas/verificarUsuarioLoginPOSTa.php?";
-
-            Log.e("URL DEL POST", url);
-
-        final String finalPswIngresado1 = pswIngresado;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.e("Response ", response );
-                    if (response.equalsIgnoreCase("DatosMalos[]")) {
-                        hideProgressDialog();
-                        Toast.makeText(MainLogginActivity.this, "Usuario o contraseña erroneas", Toast.LENGTH_SHORT).show();
-                    } else {
-                        hideProgressDialog();
-                        JSONObject jsonObject = null;
-                        try {
-                            jsonObject = new JSONObject(response.toString());
-                            JSONArray json = jsonObject.getJSONArray("usuario");
-
-                            String id_firebase= null;
-                            String nombre_usuario= null;
-                            String email_usuario= null;
-                            String rol_usuario= null;
-                            String tel_usuario= null;
-                            for (int i = 0; i < json.length(); i++) {
-                                JSONObject jsonObject2 = null;
-                                jsonObject2 = json.getJSONObject(i);
-                                 id_firebase=(jsonObject2.optString("id_firebase"));
-                                 nombre_usuario=(jsonObject2.optString("nombre_usuario"));
-                                 email_usuario=(jsonObject2.optString("email_usuario"));
-                                 rol_usuario=(jsonObject2.optString("rol_usuario"));
-                                 tel_usuario=(jsonObject2.optString("tel_usuario"));
-                            }
-                            Utilidades ult = new Utilidades();
-
-                            Log.e("Intento en Fire",ult.Desencriptar(finalPswIngresado1));
-                            FinalizarInicioS(id_firebase,nombre_usuario,email_usuario,rol_usuario,tel_usuario, ult.Desencriptar(finalPswIngresado1));
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    hideProgressDialog();
-                    Toast.makeText(MainLogginActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-                    Log.e("Response ", error.toString());
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put("tlI", telIngresado);
-                    parameters.put("pswI", finalPswIngresado);
-                    return parameters;
-                }
-
-            };
-            Log.e("Usuario a consultar", telIngresado + " " + finalPswIngresado);
-            request.add(stringRequest);*/
-    }
-
-    private void FinalizarInicioS(final String id_firebase, final String nombre_usuario, final String email_usuario, final String rol_usuario, final String tel_usuario, String password_usuario) {
-        mAuth = FirebaseAuth.getInstance();
-        Log.e("Finalizando Inicio", "Finalizando");
-
-            mAuth.signInWithEmailAndPassword(email_usuario, password_usuario)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.e("log fireb", "signInWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                salvarPermanente(id_firebase, nombre_usuario, email_usuario, rol_usuario, tel_usuario);
-                                //updateIU();
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.e("log fireb E", "signInWithEmail:failure", task.getException());
-                                Toast.makeText(MainLogginActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+        
     }
 
     private void verificarUsuarioYaEsteRegistrado(final String telIngresadoVerificar) {
         //Verifico el usuario existe 000Webhost
-        //Relaciono el IDFirebase con el telefono que ingrese y miro si existe
+        //Relaciono el email con el telefono que ingrese y miro si existe
         showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
         request = Volley.newRequestQueue(getApplicationContext());
 
@@ -321,10 +252,7 @@ public class MainLogginActivity extends AppCompatActivity {
                 } else {
                     try {
                         //Recibo los datos del usuario que tiene ese telefono
-                        String emaildeEseTelefon=null;
-                        String rol_u = null;
-                        String nombre_u = null;
-                        String IDFIre_u = null;
+
                         JSONObject jsonObject = new JSONObject(response.toString());
                         JSONArray json = jsonObject.getJSONArray("already");
                         for (int i = 0; i < json.length(); i++) {
@@ -366,100 +294,85 @@ public class MainLogginActivity extends AppCompatActivity {
 
     }
 
-    private void iniciarSesionUsuarioFacebook(final String idFirebaseparaFB) {
-            request = Volley.newRequestQueue(getApplicationContext());
+    private void generarInicioDeSesionFB(final String IDEnviadoU) {
+        showProgressDialog("Verificando ...","....");
+        //Verifico el usuario existe 000Webhost si no existe, pido que complete los datos
+        showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
+        request = Volley.newRequestQueue(getApplicationContext());
 
         String ip =getString(R.string.ip_way);
+        String url = ip + "/consultas/verificarUsuarioYaEstaRegistradoconFirebase.php?";
+        Log.e("URL DEL POST", url);
 
-            String url = ip + "/consultas/verificarUsuarioLoginPOSTFB.php?";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                hideProgressDialog();
+                Log.e("Response ", response);
 
-            Log.e("URL DEL POST", url);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    hideProgressDialog();
-                    Log.e("Response ", response + response.equalsIgnoreCase("[]") + response.isEmpty());
-                    if (response.equalsIgnoreCase("DatosMalos[]")) {
-                        Toast.makeText(MainLogginActivity.this, "Por favor complete su registro.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainLogginActivity.this, MainActivityCompleteRegister.class);
-                        intent.putExtra("nombre_fb",nombre_fb);
-                        intent.putExtra("email",  email_fb );
-                        intent.putExtra("id_firebase",  id_firebase);
-                        hideProgressDialog();
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        hideProgressDialog();
-                        JSONObject jsonObject = null;
+                if (response.equalsIgnoreCase("NoEncontrado[]")) {
+                    Intent intent = new Intent(MainLogginActivity.this, MainActivityCompleteRegister.class);
+                    intent.putExtra("nombre_fb", nombre_fb);
+                    intent.putExtra("email", email_fb);
+                    id_firebase = mAuth.getUid();
+                    intent.putExtra("id_firebase", id_firebase);
+                    startActivity(intent);
+
+                } else {
+                    if (mAuth.getCurrentUser().isEmailVerified()) {
+                        String tel_usuario = null;
                         try {
-                            jsonObject = new JSONObject(response.toString());
-                            JSONArray json = jsonObject.getJSONArray("usuario");
+                            //Creo un jsonobject con el string
+                            JSONObject jsonObject = new JSONObject(response.toString());
+                            //extracting json array from response string
+                            JSONArray json = jsonObject.getJSONArray("already");
 
-                            String id_firebase= null;
-                            String nombre_usuario= null;
-                            String email_usuario= null;
-                            String rol_usuario= null;
-                            String tel_usuario= null;
                             for (int i = 0; i < json.length(); i++) {
-                                JSONObject jsonObject2 = null;
-                                jsonObject2 = json.getJSONObject(i);
-                                id_firebase=(jsonObject2.optString("id_firebase"));
-                                nombre_usuario=(jsonObject2.optString("nombre_usuario"));
-                                email_usuario=(jsonObject2.optString("email_usuario"));
-                                rol_usuario=(jsonObject2.optString("rol_usuario"));
-                                tel_usuario=(jsonObject2.optString("tel_usuario"));
+                                JSONObject jsonObject2 = json.getJSONObject(i);
+                                tel_usuario = jsonObject2.optString("tel_usuario");
+                                id_firebase = jsonObject2.optString("id_firebase");
                             }
 
-                            //Verifico que no esta vacio
-                            if(id_firebase != null){
-                                //hideProgressDialog();
-                                salvarPermanente(id_firebase,nombre_usuario,email_usuario,rol_usuario,tel_usuario);
-                                Toast.makeText(MainLogginActivity.this, "Login Exitoso! Bienvenido "+nombre_usuario+".", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MainLogginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }else{
-                                Toast.makeText(MainLogginActivity.this, "Debe completar el registro.", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MainLogginActivity.this, MainActivityCompleteRegister.class);
-                                intent.putExtra("nombre_fb",nombre_fb);
-                                intent.putExtra("email",  email_fb );
-                                intent.putExtra("id_firebase",  id_firebase);
-                                hideProgressDialog();
-                                startActivity(intent);
-                                finish();
-                            }
-
-
+                            salvarPermanente(id_firebase, nombre_fb, emaildeEseTelefon, "3", tel_usuario);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
+
+                    } else {
+                        LoginManager.getInstance().logOut();
+                        FirebaseAuth.getInstance().signOut();
+                        Toast.makeText(MainLogginActivity.this, "Error debe validar su usuario verifique su correo electronico", Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
 
 
-            }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    hideProgressDialog();
-                    Log.e("Response ", error.toString());
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put("fID", idFirebaseparaFB);
-                    return parameters;
-                }
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainLogginActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+                Log.e("Error Response ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("IDEnviadoU", IDEnviadoU);
+                return parameters;
+            }
 
-            };
-            Log.e("Usuario a consultar", idFirebaseparaFB);
-            request.add(stringRequest);
+        };
+        request.add(stringRequest);
 
     }
+
+
+
+
+
 
 
 
@@ -491,35 +404,164 @@ public class MainLogginActivity extends AppCompatActivity {
 
     //Registra el token de facebook, y inicia el completar la sesion
     private void handleFacebookAccessToken(AccessToken token) {
-        final AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        showProgressDialog("Verificando Información", "....");
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+  /*      Log.e("Usuario mauth", mAuth.toString());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-
-                            Log.e("Result login", "signInWithCredential:success");
+                            Log.e("Inicio sesion ex", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            id_firebase = mAuth.getCurrentUser().getUid();
-                            nombre_fb =mAuth.getCurrentUser().getDisplayName();
-                            email_fb= mAuth.getCurrentUser().getEmail();
-                            Log.e("Datos de FB", id_firebase +" " + nombre_fb+" " + email_fb);
-                            showProgressDialog("Verificando Información","");
-                            iniciarSesionUsuarioFacebook(id_firebase);
-
-
+                            hideProgressDialog();
+                            salvarPermanente(mAuth.getUid(),nombre_fb, email_fb,"3",emaildeEseTelefon);
                         } else {
                             // If sign in fails, display a message to the user.
                             hideProgressDialog();
-                            Log.e("Result login", "signInWithCredential:failure", task.getException());
+                            Log.e("Errror iniciando", "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainLogginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                        }
 
+                        // ...
+                    }
+                });
+    }
+
+
+*/
+
+
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        hideProgressDialog();
+                        // Account exists with different credential. Assume the developer wants to
+                        // continue and link new credential to existing account.
+                        //Verificar que el usuario no exista con el correo y OTRA CREDENCIAL
+                        if (!task.isSuccessful() ){
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException) {
+                            FirebaseAuthUserCollisionException exception =
+                                    (FirebaseAuthUserCollisionException) task.getException();
+                            Log.e("Colisiono", exception.getErrorCode());
+                            if (exception.getErrorCode().equals(
+                                    "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") ){
+                                // Lookup existing account’s provider ID.
+                                Log.e("Dandole email", email_fb);
+                                mAuth.fetchSignInMethodsForEmail(email_fb).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                                        if (task.isSuccessful()) {
+                                            if (task.getResult().getSignInMethods().contains(
+                                                    EmailAuthProvider.PROVIDER_ID)) {
+                                                // Password account already exists with the same email.
+                                                // Ask user to provide password associated with that account.
+                                                // Sign in with email and the provided password.
+                                                // If this was a Google account, call signInWithCredential instead.
+
+                                                //ERROR AQUI HAY UN ERROR
+
+                                                vincularEmailFacebookProvider(credential);
+                                            }
+                                        }
+                                    }
+                                });
+
+                            }}
+                            else{
+                                Log.e("Error Usu Fb",task.toString());
+                                Toast.makeText(MainLogginActivity.this, "Error Creando Usuario.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else
+                            {
+                                //Verificar, que el usuario no este en 000
+                                //Si el usuario no esta en 000 tiene que ir a completar el registro
+                                generarInicioDeSesionFB(mAuth.getUid());
+                                //Si si esta en 000 ya tiene que iniciar en el main
+                            hideProgressDialog();
                         }
                     }
                 });
     }
+
+    private void vincularEmailFacebookProvider(AuthCredential credential  ) {
+        Log.e("Credenciales",  " -"+credential + "- " + mAuth.getCurrentUser());
+
+        final String[] psw = new String[1];
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Ingrese su contraseña de Wayloo para vincular a Facebook");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                psw[0] = input.getText().toString();
+
+
+                mAuth.signInWithEmailAndPassword(email_fb,psw[0])
+                        .addOnCompleteListener(MainLogginActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Log.e("Mauth ", "-"+mAuth.getCurrentUser().toString()+"-");
+                                    //Si el correo y la clave estan ok, entonces verifico que la cuenta este verifica
+                                    mAuth.getCurrentUser().linkWithCredential(credential)
+                                            .addOnCompleteListener(MainLogginActivity.this, new OnCompleteListener<AuthResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d("Vinculacion", "linkWithCredential:success");
+                                                        generarInicioDeSesionFB(mAuth.getUid());
+                                                    } else {
+                                                        Log.e("Vinculacion", "linkWithCredential:failure", task.getException());
+                                                        Toast.makeText(MainLogginActivity.this, "Authentication failed.",
+                                                                Toast.LENGTH_SHORT).show();
+
+                                                    }
+
+                                                    // ...
+                                                }
+                                            });
+
+
+                                } else {
+                                    LoginManager.getInstance().logOut();
+                                    // If sign in fails, display a message to the user.
+                                    Log.e("log fireb E", "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(MainLogginActivity.this, "Contraseña de Wayloo erronea no se pudo vincular.",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+
+                        });
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LoginManager.getInstance().logOut();
+                dialog.cancel();
+
+            }
+        });
+
+        builder.show();
+
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -570,7 +612,7 @@ public class MainLogginActivity extends AppCompatActivity {
     private void salvarPermanente(String Currentid,String name, String email, String rol, String tel_usuario){
         //Save registro permanente
         SQLiteDatabase db = usdbh.getWritableDatabase();
-        db.execSQL("INSERT INTO CurrentUsuario VALUES ('"+Currentid+"','"+name+"','"+email+"','true',"+ rol+",'"+tel_usuario+"')");
+        db.execSQL("INSERT INTO CurrentUsuario VALUES ('"+Currentid+"','"+name+"','"+email+"',"+ rol+",'"+tel_usuario+"')");
         Log.e("Salvado permanente",Currentid);
         Intent intent = new Intent(MainLogginActivity.this, MainActivity.class);
         hideProgressDialog();

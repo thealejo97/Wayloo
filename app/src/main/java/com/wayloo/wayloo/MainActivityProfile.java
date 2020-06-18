@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -58,6 +60,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
+import com.wayloo.wayloo.ui.anadirpeluqueria.AnadirPeluqueriaFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,7 +83,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     private String id_firebase;
     private String nombre_usuario;
     private String apellido_usuario;
-    private String password_usuario;
     private String email_usuario;
     private String ciudad_usuario;
     private String rol_usuario;
@@ -105,8 +107,8 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     private final int MIS_PERMISOS = 100;    EditText tel_u_TV, nombTV, apllTV, PWTV, emailTV, ciudadTV, rolTV;
 
 
-    private Button editarButton;
-    private Button btnEliminarPerfil;
+    private Button editarButton, convertirCLaADMButton;
+    private TextView btnEliminarPerfil;
 
 
     String id_FirebaseCurrentUser = "";
@@ -118,10 +120,12 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_profile);
+        //Relaciono los elemntos graficos
         editarButton = findViewById(R.id.editarButonPerfil);
-
+        convertirCLaADMButton = findViewById(R.id.convertirCLaADM);
         chModobarber = findViewById(R.id.checkBoxModoBarbero);
         imgPerfil = findViewById(R.id.imageViewPrincipalFotoPerfil);
         tel_u_TV = findViewById(R.id.TelBarSPerfil);
@@ -160,6 +164,38 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
             }
         });
+
+        convertirCLaADMButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivityProfile.this);
+                builder.setTitle("Atención");
+                builder.setMessage("Esta a punto de convertirse en un administrador de peluquería, Esto habilitará nuevas funciones para el manejo de su peluquería," +
+                        " a continuación debe crear una peluquería. ¿Desea continuar?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Fragment miFragment = new AnadirPeluqueriaFragment();
+                        String tag="anadirpeluqueria";
+                        setContentView(R.layout.activity_main);
+                        Intent intent = new Intent(MainActivityProfile.this, MainActivity.class);
+
+                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
+
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivityProfile.this, "Cancelado", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.show();
+            }
+            }
+        );
 
         imgPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -521,14 +557,12 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                             id_firebase = jsonObject2.optString("id_firebase");
                             nombre_usuario = jsonObject2.optString("nombre_usuario");
                             apellido_usuario = jsonObject2.optString("apellido_usuario");
-                            password_usuario = jsonObject2.optString("password_usuario");
                             email_usuario = jsonObject2.optString("email_usuario");
                             ciudad_usuario = jsonObject2.optString("ciudad_usuario");
                             rol_usuario = jsonObject2.optString("rol_usuario");
-                            OLD_PWTV = password_usuario;
                         }
 
-                        updateIU(tel_usuario, id_firebase, nombre_usuario, apellido_usuario, password_usuario, email_usuario, ciudad_usuario, rol_usuario);
+                        updateIU(tel_usuario, id_firebase, nombre_usuario, apellido_usuario, email_usuario, ciudad_usuario, rol_usuario);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -558,7 +592,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         request.add(stringRequest);
     }
 
-    private void updateIU(String tel_usuario, String id_firebase, String nombre_usuario, String apellido_usuario, String password_usuario, String email_usuario, String ciudad_usuario, String rol_usuario) {
+    private void updateIU(String tel_usuario, String id_firebase, String nombre_usuario, String apellido_usuario, String email_usuario, String ciudad_usuario, String rol_usuario) {
 
 
         tel_u_TV = findViewById(R.id.TelBarSPerfil);
@@ -567,7 +601,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         emailTV = findViewById(R.id.emailPerfil);
         ciudadTV = findViewById(R.id.CiudadPerfil);
         rolTV = findViewById(R.id.rolPerfil);
-        Utilidades utl = new Utilidades();
 
         cargarWebImagen(id_firebase);
         tel_u_TV.setText(tel_usuario);
@@ -990,10 +1023,12 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         dialogo.setMessage("Debe aceptar los permisos para el correcto funcionamiento de la App");
 
         dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
+
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, 100);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, 100);
+                }
             }
         });
         dialogo.show();

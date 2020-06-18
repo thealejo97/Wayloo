@@ -18,7 +18,7 @@
             android:layout_width="150dp"
             android:layout_gravity="center"
             android:layout_height="150dp"
-            tools:srcCompat="@drawable/ic_logor" />
+            tools:srcCompat="@drawable/ic_logo" />
         <EditText
             android:id="@+id/etxt_PeluqueriaNitAnadir"
             android:layout_width="match_parent"

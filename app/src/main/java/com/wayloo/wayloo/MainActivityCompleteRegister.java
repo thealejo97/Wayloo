@@ -2,6 +2,7 @@ package com.wayloo.wayloo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -53,6 +54,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.RuntimeExecutionException;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.wayloo.wayloo.entidades.nitp;
@@ -85,7 +91,7 @@ import java.util.regex.Pattern;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class MainActivityCompleteRegister extends AppCompatActivity implements Response.Listener<JSONObject>,Response.ErrorListener  {
+public class MainActivityCompleteRegister extends AppCompatActivity {
     //Creamos la BD interna
     UsuariosSQLiteHelper usdbh =
             new UsuariosSQLiteHelper(MainActivityCompleteRegister.this, "dbUsuarios", null, 1);
@@ -174,94 +180,47 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
         ButtonPickImagen = findViewById(R.id.buttonImgperfil);
         request= Volley.newRequestQueue(getApplicationContext());
 
-//Primero queremos obtener la informacion general del usuario la comun
+        //Primero queremos obtener la informacion general del usuario la comun
+        //Inicializamos los componentes graficos
         imgPerfil = findViewById(R.id.imageViewProfileFoto);
-      //  redondearCanvas(imgPerfil);
-        BitmapDrawable drawable = (BitmapDrawable) imgPerfil.getDrawable();
-        Bitmap mbitmap = drawable.getBitmap();
-        mbitmap = redimensionarImagen(mbitmap, 5, 10);
-//Inicializamos los componentes graficos
         telefono= findViewById(R.id.etxt_telefono);
-        titulo=findViewById(R.id.tituloSeparador);
-        spinerRol= findViewById(R.id.spinnerRol);
-        ArrayAdapter adapterA = ArrayAdapter.createFromResource(this,
-                R.array.roles, R.layout.color_spinner_layout);
-        adapterA.setDropDownViewResource(R.layout.spinner_dropdown);
-        spinerRol.setAdapter(adapterA);
         btRegistrar=findViewById(R.id.btn_register);
         etPassword=findViewById(R.id.etxt_password);
         etCity = findViewById(R.id.etxt_CIUDAD);
-//Llenamos los datos base
+        //Sacamos los datos que nos mando el facebook osea el nombre y el correo
+        // Llenamos los datos base
         name=getIntent().getStringExtra("nombre_fb");;
-        String [] nombr= name.split(" ");
-        name=nombr[0];
+        String [] tempNombr= name.split(" ");
+        name=tempNombr[0];
         lastname=getIntent().getStringExtra("nombre_fb");
         String []  apell = lastname. split(" ");
-        lastname=apell[1];
+        if(apell[1] != null){lastname=apell[1];}else{lastname="";}
         email=getIntent().getStringExtra("email");
         id_firebase=getIntent().getStringExtra("id_firebase");
-        ButonVerificarNIT = findViewById(R.id.ButtonVerificarNIT);
-        NITalQuePerteneceBarbero = findViewById(R.id.EtxNitPeluqueriaPerteneceBarbero);
-
         spinerCiudad=findViewById(R.id.ciudad_spinner);
-/*
-        ArrayAdapter adapterAL = ArrayAdapter.createFromResource(this,
-                R.array.ciudades, R.layout.color_spinner_layout);
-        adapterAL.setDropDownViewResource(R.layout.spinner_dropdown);
-        spinerCiudad.setAdapter(adapterAL);*/
+        mAuth= FirebaseAuth.getInstance();
         txtEmailComp = findViewById(R.id.etxt_emailComplete);
+        //Inicializo el campo email con el q me trajo de fb
         txtEmailComp.setText(email);
 
-
-        //Verifica que si se edita el NIT ya no fue verificado
-        btRegistrar.setClickable(false);
-        NITalQuePerteneceBarbero.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                btRegistrar.setClickable(false);
-                NITVerificado = false;
-                NITalQuePerteneceBarbero.setTextColor(Color.RED);
-            }
-        });
-        // Si presiona verificar
-        ButonVerificarNIT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showProgressDialog("Verificando NIT", "Espere mientras se contacta con el servidor");
-                //Realiza y verifica que el nit ingresado ya este registrado
-                if (NITalQuePerteneceBarbero.getText().toString().isEmpty()) {
-                    hideProgressDialog();
-                    Toast.makeText(MainActivityCompleteRegister.this, "El campo NIT a verificar no debe de estar vacio.", Toast.LENGTH_SHORT).show();
-                } else {
-                    consultarPeluqueriaExiste(NITalQuePerteneceBarbero.getText().toString());
-                }
-            }
-        });
-
-
-//Cuando presiona registrar
+        //Cuando presiona registrar
         btRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //No inicializo la ciudad ya que se selecciona dependiendo de la ubicacion
                 cellphone = telefono.getText().toString();
                 email = txtEmailComp.getText().toString();
-                email=getIntent().getStringExtra("email");
                 Password =etPassword.getText().toString();
-                if (name.isEmpty() && email.isEmpty() && Password.isEmpty()) {
+                miCiudad=spinerCiudad.getSelectedItem().toString();
+                if (name.isEmpty() || email.isEmpty() || Password.isEmpty()) {
                     Toast.makeText(MainActivityCompleteRegister.this, "Error los campos no deben de estar vacios.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Password.length() > 6 && name.length() > 3) {
+                    if (Password.length() > 6) {
                         if (validarEmail()) {
+                            //RegistrarUsuarioFirebase();
+                            AuthCredential credential = EmailAuthProvider.getCredential(email, Password);
+                            vincularFacebookEmailProvider(credential);
 
+                            /*
                             if (rol != 0) {
                                 showProgressDialog("Registrando Usuario", "Espere mientras se contacta con el servidor");
                                 //Inicializa todos y registra en firebase
@@ -292,7 +251,7 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
 
                                 }
                             }
-                        }else {
+                       */ }else {
                             Toast.makeText(MainActivityCompleteRegister.this, "Error el email ingresado no es valido", Toast.LENGTH_SHORT).show();
                         }
                     } else {
@@ -302,100 +261,181 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
 
             }
         });
-
-        //Spinner cuando cambia
-        spinerRol.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                String currentItem = spinerRol.getSelectedItem().toString();
-                if (currentItem.equals("Administrador")) {btRegistrar.setClickable(true);
-                    rol = 1;
-                    titulo.setVisibility(View.VISIBLE);
-                    titulo.setText("INGRESE INFORMACIÓN DE SU PELUQUERIA");
-                    View v3 = findViewById(R.id.LinealAdministrador);
-                    v3.setVisibility(View.VISIBLE);
-                    View v55 = findViewById(R.id.linealBarbetoCompleto);
-                    v55.setVisibility(View.GONE);
-                }
-                if (currentItem.equals("Barbero")) {
-                    if(NITVerificado){btRegistrar.setClickable(true);}else{btRegistrar.setClickable(false);}
-                    rol = 2;
-                    View v55 = findViewById(R.id.linealBarbetoCompleto);
-                    v55.setVisibility(View.VISIBLE);
-                    View v3 = findViewById(R.id.LinealAdministrador);
-                    v3.setVisibility(View.GONE);
-                    titulo.setVisibility(View.VISIBLE);
-                    titulo.setText("Recuerde que debe de estar registrado en una peluqueria para ingresar.");
-                }
-                if (currentItem.equals("Cliente")) {btRegistrar.setClickable(true);
-                    rol = 3;
-                    View v55 = findViewById(R.id.linealBarbetoCompleto);
-                    v55.setVisibility(View.GONE);
-                    View v3 = findViewById(R.id.LinealAdministrador);
-                    v3.setVisibility(View.GONE);
-                    titulo.setVisibility(View.INVISIBLE);
-
-                }
-                if (currentItem.equals("Seleccione su rol")) {btRegistrar.setClickable(false);
-                    rol = 3;
-                    View v55 = findViewById(R.id.linealBarbetoCompleto);
-                    v55.setVisibility(View.GONE);
-                    View v3 = findViewById(R.id.LinealAdministrador);
-                    v3.setVisibility(View.GONE);
-                    titulo.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                rol=0;
-                View v55 = findViewById(R.id.linealBarbetoCompleto);
-                v55.setVisibility(View.GONE);
-                View v3 = findViewById(R.id.LinealAdministrador);
-                v3.setVisibility(View.GONE);
-                titulo.setVisibility(View.GONE);
-            }
-        });
-
-        ///// Para fechas
-        //Widget EditText donde se mostrara la hora obtenida
-        etHora_inicio = (EditText) findViewById(R.id.et_mostrar_hora_picker_inicio);
-        etHora_fin = (EditText) findViewById(R.id.et_mostrar_hora_picker_fin);
-        //Widget ImageButton del cual usaremos el evento clic para obtener la hora
-        ibObtenerHora = (ImageButton) findViewById(R.id.ib_obtener_hora_inicio);
-        ibObtenerHora_fin = (ImageButton) findViewById(R.id.ib_obtener_hora_fin);
-        //Evento setOnClickListener - clic
-        ibObtenerHora.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.ib_obtener_hora_inicio:
-                        obtenerHora_inicio();
-                        break;
-                }
-            }
-        });
-        ibObtenerHora_fin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.ib_obtener_hora_fin:
-                        obtenerHora_fin();
-                        break;
-                }
-            }
-        });
+//Si presiono seleccionar imagen
         ButtonPickImagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (solicitaPermisosVersionesSuperiores()) {
+                    //Pide permisos android
                     mostrarDialogOpciones();
                 }
             }
         });
 
+    }
+
+
+
+    private void vincularFacebookEmailProvider( AuthCredential credential) {
+        mAuth.getCurrentUser().linkWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+
+                            mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    //Se envio el correo exitosamente
+                                    //escribe en 000
+                                    registrarUsuario();
+                                    Log.d("Vinculacion", "linkWithCredential:success");
+                                    //Login
+                                    Toast.makeText(MainActivityCompleteRegister.this, "Se ha enviado un correo de verificación", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            Log.e("Vinculacion", "linkWithCredential:failure", task.getException());
+                            Log.e("Vinculacion", "linkWithCredential:failure--"+task.getException().getMessage() + "--");
+                            if(task.getException().getMessage().equals("User has already been linked to the given provider.")){
+                                //Se envio el correo exitosamente
+                                //escribe en 000
+                                registrarUsuario();
+                                Log.d("Vinculacion", "linkWithCredential:success");
+                                //Login
+                                Toast.makeText(MainActivityCompleteRegister.this, "Se ha enviado un correo de verificación", Toast.LENGTH_SHORT).show();
+                            }else{
+                            Toast.makeText(MainActivityCompleteRegister.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+
+
+
+    //Registra el usuario en la bd SQL Externa
+    private void registrarUsuario() {
+
+        showProgressDialog("Registrando.... ", "Por favor espere... ");// Muestro el progress
+        //Inicializo los atributos que voy a enviar a la bd
+        bitmap = ((BitmapDrawable) imgPerfil.getDrawable()).getBitmap(); // Saco el bitmap de la imagen que hay en el Imageview
+        request2 = Volley.newRequestQueue(getApplicationContext());// Creo el request
+        String imagen = convertirImgString(bitmap);
+
+        String ip =getString(R.string.ip_way);// Saco la ip base del value String
+        String url = ip + "/consultas/rUsuario.php?";// Completo  la op
+        Log.e("URL DEL POST", url);// Imprimo la ip completa
+        //Cargo el string request que es como la peticion
+        stringRequestS = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //On response es la respuesta de la consulta
+                hideProgressDialog();// Oculto el progress
+                Log.e("RESPUESTA SQL: ", "" + response); // imprimo la respuesta
+                // Si la respuesta del web service es que guardo
+                if (response.trim().equalsIgnoreCase("registrado")) {
+
+                    Toast.makeText(MainActivityCompleteRegister.this, "Verifique su correo para validar su usuario", Toast.LENGTH_SHORT).show();
+                    //Guardo los datos en sqlite
+                    //     salvarPermanente();
+
+                    //Ya inicio sesion entonces paso al Mainactivity
+                    Intent intent = new Intent(MainActivityCompleteRegister.this, MainLogginActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    //Si la respuesta del web service es error, no se pudo escribir en la 000webhost, entonces lo borro del fire
+                    try {
+                        Toast.makeText(MainActivityCompleteRegister.this, "No se ha registrado ", Toast.LENGTH_SHORT).show();
+                        deleteUserFirebase(email,Password);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Error de conexión
+                Log.e("Error de conexion", error.toString());
+                Toast.makeText(MainActivityCompleteRegister.this, "No se ha podido conectar", Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+            }
+
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                //los parametros del POST
+                Map<String, String> parametros = new HashMap<>();
+                parametros.put("tel_usuario", cellphone);
+                parametros.put("id_firebase", id_firebase);
+                parametros.put("nombre_usuario", name);
+                parametros.put("apellido_usuario", lastname);
+                parametros.put("email_usuario", email);
+                parametros.put("ciudad_usuario", miCiudad);
+                parametros.put("rol_usuario", "3");
+                parametros.put("imagen", imagen);
+                return parametros;
+            }
+        };
+        //Ejecuto el request
+        request2.add(stringRequestS);
+    }
+
+
+    private void deleteUserFirebase(final String emailU, String pwU) throws Exception {
+        Log.e("Delete", "ingreso a deleteAccount");
+
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); //Obtengo el usuario
+        AuthCredential credential = EmailAuthProvider.getCredential(emailU, emailU); // Re autentico
+        user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //Elimino
+                        user.delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.e("Usuario eliminar", "User account deleted.");
+                                        } else {
+                                            Log.e("Usuario eliminar", "error eliminanod." + task.getResult());
+                                        }
+                                    }
+                                });
+
+                    }
+                });
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Valida el email que sea correcto
     private boolean validarEmail() {
@@ -403,91 +443,6 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
         return pattern.matcher(email).matches();
     }
 
-    private void RegistrarUsuarioAdminWebBD(){
-        bitmap = ((BitmapDrawable) imgPerfil.getDrawable()).getBitmap();
-        try {
-            bitmap = getFacebookProfilePicture(id_firebase);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        request2 = Volley.newRequestQueue(getApplicationContext());
-        cellphone = telefono.getText().toString();
-        Password = etPassword.getText().toString();
-        miCiudad= spinerCiudad.getSelectedItem().toString();
-
-
-    if(miCiudad.equalsIgnoreCase("Seleccione su ciudad")){
-        Toast.makeText(this, "Error, debe seleccionar una ciudad Valida", Toast.LENGTH_SHORT).show();
-    }else {
-        direccionET = findViewById(R.id.etxt_peluqueriaDireccion);
-        NitPeluqueriaET = findViewById(R.id.etxt_PeluqueriaNit);
-        nombre_peluqueriaET = findViewById(R.id.etxt_PeluqueriaNombre);
-        telefono_peluqueriaET = findViewById(R.id.etxt_telefono_peluqueria);
-
-        direccion = direccionET.getText().toString();
-        NitString = NitPeluqueriaET.getText().toString();
-        nombrePeluqueria = nombre_peluqueriaET.getText().toString();
-        telPeluqueria = telefono_peluqueriaET.getText().toString();
-
-        String ip =getString(R.string.ip_way);
-
-        String url = ip + "/consultas/registrar_UsuarioIMG.php?";
-        Log.e("URL DEL POST", url);
-
-        stringRequestS = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                hideProgressDialog();
-                Log.i("RESPUESTA: ", "" + response);
-                if (response.trim().equalsIgnoreCase("registra")) {
-                    salvarPermanente();
-                    Toast.makeText(MainActivityCompleteRegister.this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivityCompleteRegister.this, "No se ha registrado ", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Error conexion", error.toString());
-                Toast.makeText(MainActivityCompleteRegister.this, "No se ha podido conectar", Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                String imagen = convertirImgString(bitmap);
-                Utilidades utilidad = new Utilidades();
-                Map<String, String> parametros = new HashMap<>();
-                parametros.put("tel_usuario", cellphone);
-                parametros.put("id_firebase", id_firebase);
-                parametros.put("nombre_usuario", name);
-                parametros.put("apellido_usuario", lastname);
-                parametros.put("password_usuario", utilidad.Encriptar(Password));
-                parametros.put("email_usuario", email);
-                parametros.put("ciudad_usuario", miCiudad);
-                parametros.put("rol_usuario", rol + "");
-
-                //Datos de la peluqueria del administrador
-
-                parametros.put("nit_peluqueria", NitString);
-                parametros.put("nombre_peluqueria", nombrePeluqueria);
-                parametros.put("telefono_peluqueria", telPeluqueria);
-                parametros.put("direccion_peluqueria", direccion);
-                parametros.put("ciudad_peluqueria", miCiudad);
-
-
-                parametros.put("imagen", imagen);
-                return parametros;
-            }
-        };
-        Log.e("Usuario reg", cellphone+id_firebase+name+lastname+Password+email+miCiudad);
-        request2.add(stringRequestS);
-    }
-    }
 
     @Override
     protected void onStart() {
@@ -532,18 +487,6 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
     }
 
 
-    public static Bitmap getFacebookProfilePicture(String userID) throws SocketException, SocketTimeoutException, MalformedURLException, IOException, Exception
-    {
-        String imageURL;
-
-        Bitmap bitmap = null;
-        imageURL = "http://graph.facebook.com/"+userID+"/picture?type=large";
-        InputStream in = (InputStream) new URL(imageURL).getContent();
-        bitmap = BitmapFactory.decodeStream(in);
-
-        return bitmap;
-    }
-
     private String convertirImgString(Bitmap bitmap) {
 
         ByteArrayOutputStream array = new ByteArrayOutputStream();
@@ -552,367 +495,6 @@ public class MainActivityCompleteRegister extends AppCompatActivity implements R
         String imagenString = Base64.encodeToString(imagenByte, Base64.DEFAULT);
 
         return imagenString;
-    }
-
-    //Registra el usuario si es barbero
-    private void RegistrarUsuarioBarbero() {
-
-        //Inicio los datos de Usuario
-        bitmap = ((BitmapDrawable) imgPerfil.getDrawable()).getBitmap();
-
-        request = Volley.newRequestQueue(getApplicationContext());
-        cellphone = telefono.getText().toString();
-
-        Password = etPassword.getText().toString();
-        miCiudad= spinerCiudad.getSelectedItem().toString();
-        //inicializo et de peluquerias
-        direccionET = findViewById(R.id.etxt_peluqueriaDireccion);
-        NITBarberoPertenese=NitPeluqueriaET.getText().toString();
-        CheckBox chl,chm,chmi,chj,chv,chs,chd;
-        chl= findViewById(R.id.chLunesCom);
-        chm= findViewById(R.id.chMartesCom);
-        chmi= findViewById(R.id.chMiercolesCom);
-        chj= findViewById(R.id.chJuevesCom);
-        chv= findViewById(R.id.chViernesCom);
-        chs= findViewById(R.id.chSabadoCom);
-        chd= findViewById(R.id.chDomingoCom);
-
-        String diasLaborales= "";
-        if(chl.isChecked()) {
-            diasLaborales = diasLaborales + "l,";
-        }
-        if(chm.isChecked()) {
-            diasLaborales = diasLaborales + "m,";
-        }
-        if(chmi.isChecked()) {
-            diasLaborales = diasLaborales + "mi,";
-        }
-        if(chj.isChecked()) {
-            diasLaborales = diasLaborales + "j,";
-        }
-        if(chv.isChecked()) {
-            diasLaborales = diasLaborales + "v,";
-        }
-        if(chs.isChecked()) {
-            diasLaborales = diasLaborales + "s,";
-        }
-        if(chd.isChecked()){
-            diasLaborales = diasLaborales+"d,";
-        }
-
-        //Lleno los demas datos relacionados con el barbero
-        hora_inicio = etHora_inicio.getText().toString();
-        NitString = NITBarberoPertenese;
-        hora_fin = etHora_fin.getText().toString();
-        nombrePeluqueria = nombre_peluqueriaET.getText().toString();
-        telPeluqueria = telefono_peluqueriaET.getText().toString();
-        direccion = direccionET.getText().toString();
-
-        if (NITVerificado) {
-
-            String ip =getString(R.string.ip_way);
-
-            String url = ip + "/consultas/registrar_UsuarioIMG.php?";
-            Log.e("URL DEL POST", url);
-
-            String finalDiasLaborales = diasLaborales;
-            stringRequestS = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-                @Override
-                public void onResponse(String response) {
-                    hideProgressDialog();
-                    Log.e("RESPUESTA: ", "" + response);
-                    if (response.trim().equalsIgnoreCase("registra")) {
-                        salvarPermanente();
-                        Toast.makeText(MainActivityCompleteRegister.this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivityCompleteRegister.this, "No se ha registrado ", Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("RESPUESTA: ", "" + error);
-                    Toast.makeText(MainActivityCompleteRegister.this, "No se ha podido conectar", Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    String imagen = convertirImgString(bitmap);
-                    Utilidades utilidad = new Utilidades();
-                    Map<String, String> parametros = new HashMap<>();
-                    parametros.put("tel_usuario", cellphone);
-                    parametros.put("id_firebase", id_firebase);
-                    parametros.put("nombre_usuario", name);
-                    parametros.put("apellido_usuario", lastname);
-                    parametros.put("password_usuario", utilidad.Encriptar(Password));
-                    parametros.put("email_usuario", email);
-                    parametros.put("ciudad_usuario", miCiudad);
-                    parametros.put("rol_usuario", rol + "");
-                    parametros.put("diasl", finalDiasLaborales);
-                    //Datos de la peluqueria del administrador
-                    NITBarberoPertenese = NITalQuePerteneceBarbero.getText().toString();
-                    Log.e("Peluqueria pertenese", NITBarberoPertenese);
-                    parametros.put("nit_peluqueria_pertenese", NITBarberoPertenese);
-                    parametros.put("h_inicio", hora_inicio);
-                    parametros.put("h_fin", hora_fin);
-
-
-                    parametros.put("imagen", imagen);
-                    return parametros;
-                }
-            };
-
-            request.add(stringRequestS);
-
-        } else {
-            Toast.makeText(MainActivityCompleteRegister.this, "Error, debe verificar el NIT de su peluqueria.", Toast.LENGTH_LONG).show();
-
-        }
-    }
-
-    //Registra el usuario si es Cliente
-    private void RegistrarUsuarioClienteWebBD() {
-
-
-        //Inicio los datos de Usuario
-        bitmap = ((BitmapDrawable) imgPerfil.getDrawable()).getBitmap();
-
-        request = Volley.newRequestQueue(getApplicationContext());
-        cellphone = telefono.getText().toString();
-        Password = etPassword.getText().toString();
-
-        //inicializo et de peluquerias
-        direccionET = findViewById(R.id.etxt_peluqueriaDireccion);
-miCiudad=spinerCiudad.getSelectedItem().toString();
-
-        //Lleno los demas datos relacionados con el barbero
-        hora_inicio = etHora_inicio.getText().toString();
-       // NitString = NitPeluqueria.getText().toString();
-        hora_fin = etHora_fin.getText().toString();
-        //nombrePeluqueria = nombre_peluqueria.getText().toString();
-        //telPeluqueria = telefono_peluqueria.getText().toString();
-        direccion = direccionET.getText().toString();
-
-        String ip =getString(R.string.ip_way);
-
-        String url = ip + "/consultas/registrar_UsuarioIMG.php?";
-        Log.e("URL DEL POST", url);
-
-        stringRequestS = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                hideProgressDialog();
-                Log.e("RESPUESTA: ", "" + response);
-                if (response.trim().equalsIgnoreCase("registra")) {
-                    salvarPermanente();
-                    Toast.makeText(MainActivityCompleteRegister.this, "Se ha registrado con exito", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivityCompleteRegister.this, "No se ha registrado ", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("RESPUESTA: ", "" + error);
-                Toast.makeText(MainActivityCompleteRegister.this, "No se ha podido conectar", Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                String imagen = convertirImgString(bitmap);
-                Utilidades utilidad = new Utilidades();
-                Map<String, String> parametros = new HashMap<>();
-                parametros.put("tel_usuario", cellphone);
-                parametros.put("id_firebase", id_firebase);
-                parametros.put("nombre_usuario", name);
-                parametros.put("apellido_usuario", lastname);
-                parametros.put("password_usuario", utilidad.Encriptar(Password));
-                parametros.put("email_usuario", email);
-                parametros.put("ciudad_usuario", miCiudad);
-                parametros.put("rol_usuario", rol + "");
-
-
-                parametros.put("imagen", imagen);
-                return parametros;
-            }
-        };
-
-        request.add(stringRequestS);
-
-    }
-
-
-
-    //Onresponses de la consulta de nit
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        Log.i("URL REGISTRED ERROR","RESPUESTA "+ error.toString());
-
-        //El nit que se quiere comprobar fallo el registr
-
-        if(error.getMessage().toString().equals("java.net.UnknownHostException: Unable to resolve host \"wayloo.000webhostapp.com\": No address associated with hostname")){
-            Toast.makeText(MainActivityCompleteRegister.this, "Error, No se pudo conectar al servidor verifique la conexión",Toast.LENGTH_LONG).show();
-        }else{
-            //Si el error value insert es por que se esta ingresando un dato
-            if(rol==1 || rol ==3 || error.getMessage().toString().equals("org.json.JSONException: Value INSERT of type java.lang.String cannot be converted to JSONObject")){
-                salvarPermanente();
-            }else{
-                NITVerificado=false;
-                NITalQuePerteneceBarbero.setTextColor(Color.RED);
-                Toast.makeText(MainActivityCompleteRegister.this, "Error, NIT no encontrado, la peluqueria debe de estar registrada",Toast.LENGTH_LONG).show();
-            }
-        }
-        hideProgressDialog();
-    }
-
-    @Override
-    public void onResponse(JSONObject response) {
-        Log.i("VOLLEY ANSWER","VOLEY EXITOSO");
-         if(rol==2){
-            //Creo el objeto nit
-            nitp miNIT = new nitp();
-            //Busco el arreglo en el json llamado peluquera
-            JSONArray json = response.optJSONArray("peluqueria");
-            JSONObject jsonObject = null;
-
-            try {
-                //saco el objeto json
-                jsonObject = json.getJSONObject(0);
-                //Grabo el nit del json en el objeto clase minIT
-                miNIT.setNoNIT(jsonObject.optString("nit_peluqueria"));
-    //Verifico que no esta vacio
-                if(miNIT.getNoNIT() != null){
-                    hideProgressDialog();
-                    NITVerificado=true;// El nit que se quiere comprobar a sido aprobado
-                    //Coloco el texto en verde
-                    NITalQuePerteneceBarbero.setTextColor(Color.GREEN);
-                    Toast.makeText(MainActivityCompleteRegister.this, "NIT Verificado, ya puede terminar el registro.", Toast.LENGTH_LONG).show();
-
-                }else{
-                    //El nit que se quiere comprobar fallo el registro
-                    NITVerificado=false;
-                    NITalQuePerteneceBarbero.setTextColor(Color.RED);
-                    Toast.makeText(MainActivityCompleteRegister.this, "Error esta barberia aun no ha sido registrada."+NITVerificado, Toast.LENGTH_LONG).show();
-                    hideProgressDialog();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-         }}
-     }
-
-
-    private void consultarPeluqueriaExiste(final String NITAVerificar) {
-        request = Volley.newRequestQueue(getApplicationContext());
-        String ip =getString(R.string.ip_way);
-
-        String url = ip + "/consultas/consultarPeluqueriaExistePOST.php?";
-        Log.e("URL DEL POST", url);
-
-        stringRequestS = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                hideProgressDialog();
-                Log.i("RESPUESTA: ", "" + response);
-                if (response.trim().equalsIgnoreCase("404")) {
-                    NITalQuePerteneceBarbero.setTextColor(Color.RED);
-                    Toast.makeText(MainActivityCompleteRegister.this, "Barberia no encontrada", Toast.LENGTH_SHORT).show();
-                    NITVerificado = false;
-
-                } else {
-                    Toast.makeText(MainActivityCompleteRegister.this, "Barberia Encontrada", Toast.LENGTH_SHORT).show();
-                    btRegistrar.setClickable(true);
-                    NITVerificado = true;// El nit que se quiere comprobar a sido aprobado
-                    //Coloco el texto en verde
-                    NITalQuePerteneceBarbero.setTextColor(Color.GREEN);
-                    btRegistrar.setText("REGISTRAR");
-                    Toast.makeText(MainActivityCompleteRegister.this, "NIT Verificado, ya puede terminar el registro.", Toast.LENGTH_LONG).show();
-
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivityCompleteRegister.this, "No se ha podido conectar", Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                Map<String, String> parametros = new HashMap<>();
-                parametros.put("NITID", NITAVerificar);
-
-                return parametros;
-            }
-        };
-
-        request.add(stringRequestS);
-    }
-
-
-
-    private void obtenerHora_inicio() {
-                  TimePickerDialog recogerHora = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                //Formateo el hora obtenido: antepone el 0 si son menores de 10
-                String horaFormateada = (hourOfDay < 10) ? String.valueOf(CERO + hourOfDay) : String.valueOf(hourOfDay);
-                //Formateo el minuto obtenido: antepone el 0 si son menores de 10
-                String minutoFormateado = (minute < 10) ? String.valueOf(CERO + minute) : String.valueOf(minute);
-                //Obtengo el valor a.m. o p.m., dependiendo de la selección del usuario
-                String AM_PM;
-                if (hourOfDay < 12) {
-                    AM_PM = "a.m.";
-                } else {
-                    AM_PM = "p.m.";
-                }
-                //Muestro la hora con el formato deseado
-                etHora_inicio.setText(horaFormateada + DOS_PUNTOS + minutoFormateado + " " + AM_PM);
-                hora_inicio=etHora_inicio.getText().toString();
-            }
-            //Estos valores deben ir en ese orden
-            //Al colocar en false se muestra en formato 12 horas y true en formato 24 horas
-            //Pero el sistema devuelve la hora en formato 24 horas
-        }, hora, minuto, false);
-
-        recogerHora.show();
-
-    }
-
-    private void obtenerHora_fin() {
-        TimePickerDialog recogerHora = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                //Formateo el hora obtenido: antepone el 0 si son menores de 10
-                String horaFormateada = (hourOfDay < 10) ? String.valueOf(CERO + hourOfDay) : String.valueOf(hourOfDay);
-                //Formateo el minuto obtenido: antepone el 0 si son menores de 10
-                String minutoFormateado = (minute < 10) ? String.valueOf(CERO + minute) : String.valueOf(minute);
-                //Obtengo el valor a.m. o p.m., dependiendo de la selección del usuario
-                String AM_PM;
-                if (hourOfDay < 12) {
-                    AM_PM = "a.m.";
-                } else {
-                    AM_PM = "p.m.";
-                }
-                //Muestro la hora con el formato deseado
-                etHora_fin.setText(horaFormateada + DOS_PUNTOS + minutoFormateado + " " + AM_PM);
-                hora_fin=etHora_fin.getText().toString();
-            }
-            //Estos valores deben ir en ese orden
-            //Al colocar en false se muestra en formato 12 horas y true en formato 24 horas
-            //Pero el sistema devuelve la hora en formato 24 horas
-        }, hora, minuto, false);
-
-        recogerHora.show();
-
     }
 
     @Override
@@ -936,26 +518,10 @@ miCiudad=spinerCiudad.getSelectedItem().toString();
         db.execSQL("INSERT INTO CurrentUsuario VALUES ('"+id_firebase+"','"+name+"','"+email+"','true',"+rol+",'"+telefono.getText()+"')");
         Intent intent = new Intent(MainActivityCompleteRegister.this, MainActivity.class);
         hideProgressDialog();
-        cambiarClaveFirebase(Password);
         startActivity(intent);
         finish();
     }
 
-    public void redondearCanvas(ImageView img){
-        ImageView mimageView = img;
-
-        BitmapDrawable drawable = (BitmapDrawable) mimageView.getDrawable();
-        Bitmap mbitmap = drawable.getBitmap();
-
-        //B//itmap mbitmap=((BitmapDrawable) getResources().getDrawable(R.drawable.cat)).getBitmap();
-        Bitmap imageRounded=Bitmap.createBitmap(mbitmap.getWidth(), mbitmap.getHeight(), mbitmap.getConfig());
-        Canvas canvas=new Canvas(imageRounded);
-        Paint mpaint=new Paint();
-        mpaint.setAntiAlias(true);
-        mpaint.setShader(new BitmapShader(mbitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
-        canvas.drawRoundRect((new RectF(0, 0, mbitmap.getWidth(), mbitmap.getHeight())), 360, 360, mpaint); // Round Image Corner 100 100 100 100
-        mimageView.setImageBitmap(imageRounded);
-    }
 
     //permisos
     private boolean solicitaPermisosVersionesSuperiores() {
@@ -984,6 +550,7 @@ miCiudad=spinerCiudad.getSelectedItem().toString();
         dialogo.setMessage("Debe aceptar los permisos para el correcto funcionamiento de la App");
 
         dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE,CAMERA},100);
@@ -991,6 +558,7 @@ miCiudad=spinerCiudad.getSelectedItem().toString();
         });
         dialogo.show();
     }
+
     private void mostrarDialogOpciones() {
         final CharSequence[] opciones = {"Tomar Foto", "Elegir de la Galeria", "Cancelar"};
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivityCompleteRegister.this);
@@ -1019,6 +587,7 @@ miCiudad=spinerCiudad.getSelectedItem().toString();
         });
         builder.show();
     }
+
     private void abrirCamara() {
         File miFile = new File(Environment.getExternalStorageDirectory(), DIRECTORIO_IMAGEN);
         boolean isCreada = miFile.exists();
@@ -1097,6 +666,7 @@ miCiudad=spinerCiudad.getSelectedItem().toString();
             Toast.makeText(this, "Error, vacio", Toast.LENGTH_SHORT).show();
         }
     }
+
     private Bitmap redimensionarImagen(Bitmap bitmap, float anchoNuevo, float altoNuevo) {
 
         int ancho = bitmap.getWidth();
@@ -1116,18 +686,4 @@ miCiudad=spinerCiudad.getSelectedItem().toString();
         }
     }
 
-    private void cambiarClaveFirebase(String pssw){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String newPassword = pssw;
-
-        user.updatePassword(newPassword)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.e("Clave cambiada", "User password updated.");
-                        }
-                    }
-                });
-    }
 }

@@ -205,7 +205,7 @@
                 android:id="@+id/textViewCambiarContra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Restablecer Contraseña"
+                android:text="Cambiar Contraseña"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:textSize="20dp"
@@ -223,7 +223,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/shapes"
-                    android:text="    Actualizar Perfil    " />
+                    android:text="        Guardar        " />
+            <View
+                android:id="@+id/view2583"
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_weight="0"
+                android:layout_gravity="left"
+                />
+            <Button
+                android:id="@+id/convertirCLaADM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Administrar Peluqueria" />
             <View
                 android:id="@+id/view263"
                 android:layout_width="1dp"
@@ -231,12 +244,12 @@
                 android:layout_weight="0"
                 android:layout_gravity="left"
                 />
-            <Button
+            <TextView
                 android:id="@+id/editarButonEliminarPerfil"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/shapesred"
+                android:textColor="@color/whiteText"
                 android:text="    Eliminar Perfil    " />
 
 

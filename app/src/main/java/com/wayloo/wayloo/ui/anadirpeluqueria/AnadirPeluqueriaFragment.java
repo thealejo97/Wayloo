@@ -52,8 +52,7 @@ public class AnadirPeluqueriaFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        anadirPeluqueriaModel =
-                ViewModelProviders.of(this).get(AnadirPeluqueriaModel.class);
+        anadirPeluqueriaModel =ViewModelProviders.of(this).get(AnadirPeluqueriaModel.class);
         View root = inflater.inflate(R.layout.fragment_anadirpeluqueria, container, false);
 
         etNit = root.findViewById(R.id.etxt_PeluqueriaNitAnadir);
@@ -103,11 +102,13 @@ public class AnadirPeluqueriaFragment extends Fragment {
                 public void onResponse(String response) {
                     hideProgressDialog();
                     Log.e("RESPUESTA: ", "" + response);
-                    if (response.trim().equalsIgnoreCase("registra")) {
+                    if (response.trim().equalsIgnoreCase("Registraregistraregistra") || response.trim().equalsIgnoreCase("registra") ) {
                         Toast.makeText(getContext(), "Se ha la registrado la barberia con exito", Toast.LENGTH_SHORT).show();
+                        updateROLSQLITE("1");
                         Fragment miFragment = null;
                         miFragment = new MisPeluqueriasFragment();
-                        getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+                       // getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+                        getActivity().finish();
                     } else {
                         Toast.makeText(getContext(), "No se ha registrado la barberia", Toast.LENGTH_SHORT).show();
                     }
@@ -136,6 +137,15 @@ public class AnadirPeluqueriaFragment extends Fragment {
 
             request.add(stringRequestS);
         }
+    }
+
+    public void updateROLSQLITE(final String new_rol) {
+        //Creamos la BD
+        UsuariosSQLiteHelper usdbh =
+                new UsuariosSQLiteHelper(getContext(), "dbUsuarios", null, 1);
+        SQLiteDatabase db = usdbh.getReadableDatabase();
+        db.execSQL("UPDATE CurrentUsuario SET  rol = '" + new_rol + "' ");
+        progress.dismiss();
     }
 
     private String traerTelSQLITE(){
