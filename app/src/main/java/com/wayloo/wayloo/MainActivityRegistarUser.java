@@ -461,11 +461,10 @@ Log.e("Prueba", prueba);
                 hideProgressDialog();// Oculto el progress
                 Log.e("RESPUESTA SQL: ", "" + response); // imprimo la respuesta
                 // Si la respuesta del web service es que guardo
-                if (response.trim().equalsIgnoreCase("registrado")) {
+                if (response.trim().equalsIgnoreCase("registradoregistrado")) {
 
                     Toast.makeText(MainActivityRegistarUser.this, "Verifique su correo para validar su usuario", Toast.LENGTH_SHORT).show();
                     //Guardo los datos en sqlite
-               //     salvarPermanente();
 
                     //Ya inicio sesion entonces paso al Mainactivity
                     Intent intent = new Intent(MainActivityRegistarUser.this, MainLogginActivity.class);

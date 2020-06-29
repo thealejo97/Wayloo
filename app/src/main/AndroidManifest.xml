@@ -40,7 +40,8 @@
         android:usesCleartextTraffic="true">
         <activity android:name="com.wayloo.wayloo.ImagenMainActivity"></activity>
         <activity android:name="com.wayloo.wayloo.MainActivityCambiarClave" />
-        <activity android:name="com.wayloo.wayloo.MainActivityProfile" />
+        <activity android:name="com.wayloo.wayloo.MainActivityProfile"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name="com.wayloo.wayloo.MainActivityZoomPeluquero" />
         <activity android:name="com.wayloo.wayloo.MainActivityPrincipal">
             <intent-filter>
@@ -53,8 +54,7 @@
         <activity android:name="com.wayloo.wayloo.MainActivityCompleteRegister" />
         <activity
             android:name="com.wayloo.wayloo.MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_main" />
         <activity android:name="com.wayloo.wayloo.MainActivityRegistarUser" />
 
         <meta-data

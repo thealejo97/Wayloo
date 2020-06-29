@@ -48,6 +48,7 @@ import com.wayloo.wayloo.ui.home.HomeFragment;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity  {
                     String tag = "no"; // Es el tag de cada fragment
 
                     if (id == R.id.nav_home) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         seleccionado = true;
                         fragmentActual = "home";
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity  {
                     }
                     ;
                     if (id == R.id.nav_mi_cronograma) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         seleccionado = true;
                         miFragment = new MiCronogramaFragment();
@@ -166,6 +169,7 @@ public class MainActivity extends AppCompatActivity  {
                     ;
 
                     if (id == R.id.nav_mis_peluquerias) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         seleccionado = true;
                         miFragment = new MisPeluqueriasFragment();
@@ -176,6 +180,7 @@ public class MainActivity extends AppCompatActivity  {
                     ;
 
                     if (id == R.id.nav_mis_reservas) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         //   Log.e("Se presiono un fragment",seleccionado + "home");
                         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         seleccionado = true;
@@ -186,6 +191,7 @@ public class MainActivity extends AppCompatActivity  {
                     ;
 
                     if (id == R.id.cerrar_s) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         builder.setTitle("Confirmación Cierre de sesión!");
                         builder.setMessage("¿Desea cerrar sesión?");
@@ -209,6 +215,7 @@ public class MainActivity extends AppCompatActivity  {
                     }
                     ;
                     if (id == R.id.nav_perfil) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         Intent intent = new Intent(MainActivity.this, MainActivityProfile.class);
                         startActivity(intent);
                         return true;
@@ -216,6 +223,7 @@ public class MainActivity extends AppCompatActivity  {
                     ;
 
                     if ((id == R.id.nav_share)) {
+                        drawer.closeDrawer(Gravity.LEFT);
                         //Compartir crea un texto de compartir
                         Intent compartir = new Intent(android.content.Intent.ACTION_SEND);
                         compartir.setType("text/plain");
@@ -227,6 +235,7 @@ public class MainActivity extends AppCompatActivity  {
                     }
 
                     if (seleccionado) {
+
                         getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
                     }
                     return false;

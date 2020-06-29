@@ -10,7 +10,7 @@
     <color name="com_facebook_button_background_color_focused_disabled">#3b5998 </color>
     <color name="black_overlay">#66000000</color>
     <color name="my_spinner_text_color">#FFFFFF</color>
-
+    <color name="span_gris">#949494</color>
 
     <!-- Screens background color-->
     <color name="bg_screen1">#f64c73</color>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -36,14 +37,20 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -53,6 +60,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.login.LoginManager;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.wayloo.wayloo.ui.Utilidades;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -104,10 +112,10 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     Bitmap bitmapSINREDONDEAR;
     private static final int COD_SELECCIONA = 10;
     private static final int COD_FOTO = 20;
-    private final int MIS_PERMISOS = 100;    EditText tel_u_TV, nombTV, apllTV, PWTV, emailTV, ciudadTV, rolTV;
+    private final int MIS_PERMISOS = 100;    EditText tel_u_TV, nombTV, apllTV, emailTV, ciudadTV, rolTV;
 
 
-    private Button editarButton, convertirCLaADMButton;
+    private Button editarButton;
     private TextView btnEliminarPerfil;
 
 
@@ -117,21 +125,29 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             new UsuariosSQLiteHelper(MainActivityProfile.this, "dbUsuarios", null, 1);
     private TextView btnCambiarClave;
     private FirebaseUser mFirebaseUser;
+    private Switch togleBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_profile);
+
+        Toolbar toolbare = findViewById(R.id.toolbarPerfil);// Inicializo el toolbar
+        toolbare.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        setSupportActionBar(toolbare);// Inicializo el toolbar
+        getSupportActionBar().setTitle("Editar Perfil");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         //Relaciono los elemntos graficos
         editarButton = findViewById(R.id.editarButonPerfil);
-        convertirCLaADMButton = findViewById(R.id.convertirCLaADM);
+        togleBtn = findViewById(R.id.toggleAdministrar);
         chModobarber = findViewById(R.id.checkBoxModoBarbero);
         imgPerfil = findViewById(R.id.imageViewPrincipalFotoPerfil);
         tel_u_TV = findViewById(R.id.TelBarSPerfil);
         nombTV = findViewById(R.id.NomBarSPerfil);
         apllTV = findViewById(R.id.ApellBarSPerfil);
-        PWTV = findViewById(R.id.PasswordPerfil);
         emailTV = findViewById(R.id.emailPerfil);
         ciudadTV = findViewById(R.id.CiudadPerfil);
         rolTV = findViewById(R.id.rolPerfil);
@@ -143,59 +159,85 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
         mAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mAuth.getCurrentUser();
+        rol_usuario = ConsultaCurrentUserROLSQLITE();
+        Log.e("Rol Interno SQLI", ConsultaCurrentUserROLSQLITE()+ "---------Ajua-------------------");
 
         consultaPerfil(id_FirebaseCurrentUser);
 
         editarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String new_tel, new_nomb, new_apell, new_PWTV, new_email, new_ciudad,
+                String new_tel, new_nomb, new_apell, new_email, new_ciudad,
                         new_rol;
                 new_tel = tel_u_TV.getText().toString();
                 new_nomb = nombTV.getText().toString();
                 new_apell = apllTV.getText().toString();
-                new_PWTV = PWTV.getText().toString();
 
                 new_email = emailTV.getText().toString();
                 new_ciudad = ciudadTV.getText().toString();
                 new_rol = rolTV.getText().toString();
 
-                updateBDRemota(new_tel, new_nomb, new_apell, new_PWTV, new_email, new_ciudad, new_rol);
+                updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad, new_rol);
 
             }
         });
 
-        convertirCLaADMButton.setOnClickListener(new View.OnClickListener() {
+        if(rol_usuario.equals("1")){
+            LinearLayout lnHabilitarModoBarbero = findViewById(R.id.linearHabilitarmodoBarbero);
+            lnHabilitarModoBarbero.setVisibility(View.VISIBLE);
+            View viewSeparador = findViewById(R.id.viewMODOB);
+            viewSeparador.setVisibility(View.VISIBLE);
+            togleBtn.setChecked(true);
+        }else {
+            togleBtn.setChecked(false);
+        }
+        togleBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivityProfile.this);
-                builder.setTitle("Atención");
-                builder.setMessage("Esta a punto de convertirse en un administrador de peluquería, Esto habilitará nuevas funciones para el manejo de su peluquería," +
-                        " a continuación debe crear una peluquería. ¿Desea continuar?");
-                builder.setCancelable(false);
-                builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Fragment miFragment = new AnadirPeluqueriaFragment();
-                        String tag="anadirpeluqueria";
-                        setContentView(R.layout.activity_main);
-                        Intent intent = new Intent(MainActivityProfile.this, MainActivity.class);
+                final Switch btn = (Switch) v;
+                final boolean switchChecked = btn.isChecked();
 
-                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
+                if (btn.isChecked()) {
+                    btn.setChecked(false);
+                } else {
+                    btn.setChecked(true);
+                }
 
-                    }
-                });
+                String message = "Esta a punto de dehabilitar el modo administrador, Esto elimminara todas las peluquerias.";
+                if (!btn.isChecked()) {
+                    message = "Esta a punto de convertirse en un administrador, Esto habilitará nuevas funciones para el manejo de su peluquería," +
+                            " a continuación debe ingresar los datos de su local. ¿Desea continuar?";
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivityProfile.this); // Change "this" to `getActivity()` if you're using this on a fragment
+                builder.setMessage(message)
+                        .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                // "Yes" button was clicked
+                                if (switchChecked) {
+                                    administradorAntiguo(ConsultaCurrentUserTELSQLITE(), btn);
 
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainActivityProfile.this, "Cancelado", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                builder.show();
+                                           /* //Cosa
+                                    if(administradorAntiguo(ConsultaCurrentUserTELSQLITE()) {
+                                        Fragment miFragment = new AnadirPeluqueriaFragment();
+                                        String tag = "anadirpeluqueria";
+                                        setContentView(R.layout.activity_main);
+                                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
+                                        btn.setChecked(true);
+                                    }*/
+                                } else {
+                                    deshabilitarAdmin();
+                                    btn.setChecked(false);
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
-            }
-        );
+        });
+
+
 
         imgPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,12 +301,157 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             );
         } else{
 
-            TextView txHabili = findViewById(R.id.txtTituHabilitarModo);
-            chModobarber.setVisibility(View.GONE);
-            txHabili.setVisibility(View.GONE);
         }
 
 
+
+    }
+
+    private void administradorAntiguo(String telConsulta, Switch btn) {
+
+        //Verifico el usuario existe 000Webhost si no existe, pido que complete los datos
+        showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
+        request = Volley.newRequestQueue(getApplicationContext());
+
+        String ip =getString(R.string.ip_way);
+        String url = ip + "/consultas/verificarEstadoDelAdministrador.php?";
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                hideProgressDialog();
+                Log.e("Response ", response);
+
+                if (response.equalsIgnoreCase("deshabilitado")) {
+                    //No existe el administrador osea que toca crearlo
+                    Fragment miFragment = new AnadirPeluqueriaFragment();
+                    String tag = "anadirpeluqueria";
+                    setContentView(R.layout.activity_main);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
+
+                } else {
+                    //Esta deshabilitado
+                    habilitarAdministradorAntiguo(telConsulta);
+
+                }
+            }
+
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivityProfile.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+                Log.e("Error Response ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("telefono", telConsulta);
+                return parameters;
+            }
+
+        };
+        request.add(stringRequest);
+
+    }
+
+    private void habilitarAdministradorAntiguo(String telConsulta) {
+
+        //Verifico el usuario existe 000Webhost si no existe, pido que complete los datos
+        showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
+        request = Volley.newRequestQueue(getApplicationContext());
+
+        String ip =getString(R.string.ip_way);
+        String url = ip + "/consultas/rehabilitarAdministrador.php?";
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                hideProgressDialog();
+                Log.e("Response ", response);
+                Switch bttn = findViewById(R.id.toggleAdministrar);
+                bttn.setChecked(true);
+                updateROLSQLITE("1");
+                Toast.makeText(MainActivityProfile.this, "Funciones de administrador habilitadas.", Toast.LENGTH_SHORT).show();
+                reiniciarApp();
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivityProfile.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+                Log.e("Error Response ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("telefono", telConsulta);
+                return parameters;
+            }
+
+        };
+        request.add(stringRequest);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private void deshabilitarAdmin() {
+
+        String new_rol = "3";
+
+            request = Volley.newRequestQueue(getApplicationContext());
+
+            String ip = getString(R.string.ip_way);
+
+            String url = ip + "/consultas/deshabilitarAdministrador.php?";
+
+            Log.e("URL DEL POST", url);
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.e("Response Update go ", response);
+                    if (response.equalsIgnoreCase("Registra")) {
+                        Toast.makeText(MainActivityProfile.this, "Modo administrador desactivado", Toast.LENGTH_SHORT).show();
+                        updateROLSQLITE(new_rol);
+                        reiniciarApp();
+                    } else {
+                        Toast.makeText(MainActivityProfile.this, "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Toast.makeText(MainActivityProfile.this, "Error de conexión verifique su internet.", Toast.LENGTH_SHORT).show();
+                    Log.e("Response Update ", error.toString());
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> parameters = new HashMap<String, String>();
+                    parameters.put("id_usuario", tel_usuario);
+
+
+                    return parameters;
+                }
+
+            };
+            request.add(stringRequest);
 
     }
 
@@ -295,9 +482,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                     if(response.equalsIgnoreCase("RegistraregistraUsuario")){
                     Toast.makeText(MainActivityProfile.this, "Modo barbero activado", Toast.LENGTH_SHORT).show();
                     updateROLSQLITE(new_rol);
-                    Intent intent = new Intent(MainActivityProfile.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();}
+                    reiniciarApp();}
                     else{
                         Toast.makeText(MainActivityProfile.this, "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
                     }
@@ -355,9 +540,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                     Log.e("Response Update go ", response);
                     //Toast.makeText(MainActivityProfile.this, "Modo barbero activado", Toast.LENGTH_SHORT).show();
                     updateROLSQLITE("1");
-                    Intent intent = new Intent(MainActivityProfile.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    reiniciarApp();
                 }
 
             }, new Response.ErrorListener() {
@@ -597,7 +780,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
         tel_u_TV = findViewById(R.id.TelBarSPerfil);
         nombTV = findViewById(R.id.NomBarSPerfil);
-        PWTV = findViewById(R.id.PasswordPerfil);
         emailTV = findViewById(R.id.emailPerfil);
         ciudadTV = findViewById(R.id.CiudadPerfil);
         rolTV = findViewById(R.id.rolPerfil);
@@ -608,11 +790,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         apllTV.setText(apellido_usuario);
         ciudadTV.setText(ciudad_usuario);
 
-        try {
-            PWTV.setText("NEW PASSWORD");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         emailTV.setText(email_usuario);
         ciudadTV.setText(ciudad_usuario);
@@ -781,7 +958,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                                 protected Map<String, String> getParams() throws AuthFailureError {
                                     Map<String, String> parameters = new HashMap<String, String>();
                                     String imagen = convertirImgString(bitmapSINREDONDEAR);
-                                    parameters.put("taac", ConsultaCurrentUserTEL());
+                                    parameters.put("taac", ConsultaCurrentUserTELSQLITE());
                                     parameters.put("tp", new_tel);
                                     parameters.put("np", new_nomb);
                                     parameters.put("ap", new_apell);
@@ -804,7 +981,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     }
 
-    private String ConsultaCurrentUserTEL() {
+    private String ConsultaCurrentUserTELSQLITE() {
         String result = "null";
         SQLiteDatabase db = usdbh.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT id_usu FROM CurrentUsuario", null);
@@ -813,6 +990,24 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             do {
                 //Asignamos el valor en nuestras variables para usarlos en lo que necesitemos
                 result = c.getString(c.getColumnIndex("id_usu"));
+            } while (c.moveToNext());
+        }
+
+        //Cerramos el cursor y la conexion con la base de datos
+        c.close();
+        db.close();
+        return result;
+    }
+
+    private String ConsultaCurrentUserROLSQLITE() {
+        String result = "null";
+        SQLiteDatabase db = usdbh.getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT rol FROM CurrentUsuario", null);
+        if (c != null) {
+            c.moveToFirst();
+            do {
+                //Asignamos el valor en nuestras variables para usarlos en lo que necesitemos
+                result = c.getString(c.getColumnIndex("rol"));
             } while (c.moveToNext());
         }
 
@@ -869,9 +1064,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         return imagenString;
     }
 
-
     ///Para picker de imagen
-
     private void abrirCamara() {
         File miFile = new File(Environment.getExternalStorageDirectory(), DIRECTORIO_IMAGEN);
         boolean isCreada = miFile.exists();

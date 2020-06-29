@@ -5,7 +5,10 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/backGroudMain"
-    android:padding="20dp">
+    android:padding="10dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/LinealAdministrador"
@@ -14,7 +17,7 @@
         android:orientation="vertical"
         >
         <ImageView
-            android:id="@+id/imageViewPrincipalFotoB"
+            android:id="@+id/imageViewPrincipalFotoBar"
             android:layout_width="150dp"
             android:layout_gravity="center"
             android:layout_height="150dp"
@@ -75,5 +78,5 @@
     </LinearLayout>
 
 
-
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -134,8 +134,8 @@
 
 
             </LinearLayout>
+
             <View
-                android:id="@+id/view"
                 android:layout_width="1dp"
                 android:layout_height="30dp"
                 android:layout_weight="0"

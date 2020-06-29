@@ -7,26 +7,44 @@
     android:orientation="vertical"
     tools:context=".MainActivityZoomPeluquero"
     android:background="@color/backGroudMain"
-    android:padding="30px">
+>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+            <Button
+                android:id="@+id/editarButonPerfil"
+                android:background="@color/colorPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_gravity="right"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                android:text="Guardar"></Button>
+
+
+    </androidx.appcompat.widget.Toolbar>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <TextView
-                android:id="@+id/textViewTituPerfil"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/titulo_perfil"
-                android:textColor="@color/whiteText"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+
 
             <ImageView
             android:id="@+id/imageViewPrincipalFotoPerfil"
@@ -42,12 +60,6 @@
                 android:gravity="center"
                 android:text="@string/CambiarFotoPerfil"
                 android:textColor="@color/whiteText" />
-
-            <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textViewTituPerfilTel"
@@ -94,35 +106,6 @@
                     android:textColor="@color/whiteText"></EditText>
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-
-                    <EditText
-                    android:id="@+id/PasswordPerfil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                        android:shadowColor="@color/colorPrimary"
-
-                        android:layout_weight="25"
-                        android:layout_gravity="left"
-                    android:inputType="textPassword"
-                    android:text="Password"
-                    android:textColor="@color/whiteText"></EditText>
-
-                    <View
-                        android:id="@+id/view2"
-                        android:layout_width="100dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="0"
-                        android:layout_gravity="left"
-                         />
-
-
-                </LinearLayout>
                 <TextView
                     android:id="@+id/textViewTituPerfilEmail"
                     android:layout_width="match_parent"
@@ -151,26 +134,62 @@
                 android:layout_height="wrap_content"
                 android:text="Ciudad"
                 android:textColor="@color/whiteText"></EditText>
+        </LinearLayout>
+
+
+
+            <View
+                android:id="@+id/view"
+                android:layout_height="0.5dp"
+                android:layout_width="match_parent"
+                android:background="@color/span_gris"
+                android:layout_gravity="left"
+                />
+
+            <!-- Linear modo admin -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <TextView
-                    android:id="@+id/textViewTituPerfilRol"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="rol"
-                    android:visibility="gone"
-                    android:textColor="@color/whiteText" />
-            <EditText
-                android:id="@+id/rolPerfil"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rol"
-                android:visibility="gone"
-                android:textColor="@color/whiteText"></EditText>
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:textColor="@color/whiteText"
+                    android:text="Modo Administrador">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                </TextView>
+                <Switch
+                    android:id="@+id/toggleAdministrar"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_gravity="center"
+                    android:shadowColor="@color/whiteText"
+                    android:theme="@style/SwitchTheme"
+                    ></Switch>
+            </LinearLayout>
+
+            <View
+                android:id="@+id/viewMODOB"
+                android:layout_height="0.5dp"
+                android:layout_width="match_parent"
+                android:background="@color/span_gris"
+                android:layout_gravity="left"
+                android:visibility="gone"
+                />
+
+            <!-- Linear Admin a barbero -->
+            <LinearLayout
+                android:id="@+id/linearHabilitarmodoBarbero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:padding="10dp">
                 <TextView
                     android:id="@+id/txtTituHabilitarModo"
                     android:layout_width="wrap_content"
@@ -178,79 +197,75 @@
                     android:textColor="@color/whiteText"
                     android:layout_gravity="center"
                     android:layout_weight="2"
+                    android:textStyle="bold"
                     android:text="Habilitar modo barbero                                     "></TextView>
 
-                    <CheckBox
-                        android:layout_weight="0"
-                        android:id="@+id/checkBoxModoBarbero"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:buttonTint="@color/whiteText"
-                        android:gravity="center"
-                        android:hint="@color/colorAccent"
-                        android:text="CheckBox" />
-                </LinearLayout>
-
-
-        </LinearLayout>
-            <View
-                android:id="@+id/view"
-                android:layout_width="1dp"
-                android:layout_height="30dp"
-                android:layout_weight="0"
-                android:layout_gravity="left"
-                />
-            <TextView
-                android:id="@+id/textViewCambiarContra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cambiar Contraseña"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:textColor="@color/whiteText" />
-            <View
-            android:id="@+id/view2683"
-            android:layout_width="1dp"
-            android:layout_height="16dp"
-            android:layout_weight="0"
-            android:layout_gravity="left"
-            />
-                <Button
-                    android:id="@+id/editarButonPerfil"
+                <CheckBox
+                    android:layout_weight="0"
+                    android:id="@+id/checkBoxModoBarbero"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:background="@drawable/shapes"
-                    android:text="        Guardar        " />
+                    android:buttonTint="@color/whiteText"
+                    android:gravity="center"
+                    android:hint="@color/colorAccent"
+                    android:text="CheckBox" />
+
+            </LinearLayout>
+
+
             <View
-                android:id="@+id/view2583"
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_weight="0"
+                android:layout_height="0.5dp"
+                android:layout_width="match_parent"
+                android:background="@color/span_gris"
                 android:layout_gravity="left"
                 />
-            <Button
-                android:id="@+id/convertirCLaADM"
-                android:layout_width="wrap_content"
+            <!-- Linear cambiar contraseña-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Administrar Peluqueria" />
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cambiar Contraseña"
+                    android:textColor="@color/whiteText"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewCambiarContra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=">"
+                    android:textSize="25dp"
+                    android:textColor="@color/whiteText" />
+
+            </LinearLayout>
+
             <View
-                android:id="@+id/view263"
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_weight="0"
+                android:layout_height="0.5dp"
+                android:layout_width="match_parent"
+                android:background="@color/span_gris"
                 android:layout_gravity="left"
                 />
+
+        <!-- Linear cambiar Eliminar perfil-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="10dp">
             <TextView
                 android:id="@+id/editarButonEliminarPerfil"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+
                 android:textColor="@color/whiteText"
-                android:text="    Eliminar Perfil    " />
+                android:text="    Eliminar Perfil    " /></RelativeLayout>
 
 
         </LinearLayout>

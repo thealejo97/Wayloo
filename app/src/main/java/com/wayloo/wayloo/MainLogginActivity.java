@@ -73,6 +73,7 @@ public class MainLogginActivity extends AppCompatActivity {
     String rol_u = null;
     String nombre_u = null;
     String IDFIre_u = null;
+    String estadoUsu = null;
     private String id_firebase;
     private String nombre_fb; // Es el nombre del usuario de facebook
     private String email_fb;// Es el email del usuario de facebook
@@ -105,7 +106,6 @@ public class MainLogginActivity extends AppCompatActivity {
             finish();
         }else {
 
-            //Iniciamos la sesion Sin Facebook
             btnIniciarSesion=findViewById(R.id.buttonLogginNomal);
             btnRestablecer = findViewById(R.id.tvRestablecerContra);
             loginButton = findViewById(R.id.buttonLoggin);
@@ -117,7 +117,6 @@ public class MainLogginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //Va y busca el email con el telefono proporcionado
-
                     verificarUsuarioYaEsteRegistrado(etusu.getText().toString());
 
                 }
@@ -130,8 +129,6 @@ public class MainLogginActivity extends AppCompatActivity {
             loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-
-
 
                     //Getting the user information
                     GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
@@ -261,10 +258,15 @@ public class MainLogginActivity extends AppCompatActivity {
                             nombre_u = jsonObject2.optString("nombre_usuario");// Saco el dato de la fila
                             emaildeEseTelefon = jsonObject2.optString("email_usuario");// Saco el dato de la fila
                             rol_u = jsonObject2.optString("rol_usuario");// Saco el dato de la fila
+                            estadoUsu = jsonObject2.optString("estado");// Saco el dato de la fila
                         }
-                        //ahora si inicio la sesion con la contraseña
-                        iniciarSesionUsuarioNormal(etusu.getText().toString(), etpw.getText().toString(),emaildeEseTelefon,IDFIre_u,nombre_u,rol_u);
-
+                        if(estadoUsu.equals("0")){
+                            hideProgressDialog();
+                            Toast.makeText(MainLogginActivity.this, "Error, el usuario ha sido deshabilitado, Comuniquese con soporte.", Toast.LENGTH_LONG).show();
+                        }else {
+                            //ahora si inicio la sesion con la contraseña
+                            iniciarSesionUsuarioNormal(etusu.getText().toString(), etpw.getText().toString(), emaildeEseTelefon, IDFIre_u, nombre_u, rol_u);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -295,7 +297,6 @@ public class MainLogginActivity extends AppCompatActivity {
     }
 
     private void generarInicioDeSesionFB(final String IDEnviadoU) {
-        showProgressDialog("Verificando ...","....");
         //Verifico el usuario existe 000Webhost si no existe, pido que complete los datos
         showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
         request = Volley.newRequestQueue(getApplicationContext());
@@ -331,9 +332,21 @@ public class MainLogginActivity extends AppCompatActivity {
                                 JSONObject jsonObject2 = json.getJSONObject(i);
                                 tel_usuario = jsonObject2.optString("tel_usuario");
                                 id_firebase = jsonObject2.optString("id_firebase");
+                                estadoUsu = jsonObject2.optString("estado");
+                                rol_u = jsonObject2.optString("rol_usuario");
+                            }
+                            hideProgressDialog();
+                            Log.e("Estado estado usu " ,estadoUsu+ "55");
+                            if(estadoUsu.equals("0")){
+                                FirebaseAuth.getInstance().signOut();
+                                LoginManager.getInstance().logOut();
+                                Toast.makeText(MainLogginActivity.this, "Error, el usuario ha sido deshabilitado, Comuniquese con soporte.", Toast.LENGTH_LONG).show();
+                                hideProgressDialog();
+                            }else {
+                                hideProgressDialog();
+                                salvarPermanente(id_firebase, nombre_fb, emaildeEseTelefon, rol_u, tel_usuario);
                             }
 
-                            salvarPermanente(id_firebase, nombre_fb, emaildeEseTelefon, "3", tel_usuario);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -376,63 +389,10 @@ public class MainLogginActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //Registra el token de facebook, y inicia el completar la sesion
     private void handleFacebookAccessToken(AccessToken token) {
         showProgressDialog("Verificando Información", "....");
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-  /*      Log.e("Usuario mauth", mAuth.toString());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.e("Inicio sesion ex", "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            hideProgressDialog();
-                            salvarPermanente(mAuth.getUid(),nombre_fb, email_fb,"3",emaildeEseTelefon);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            hideProgressDialog();
-                            Log.e("Errror iniciando", "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainLogginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-    }
-
-
-*/
-
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -507,8 +467,6 @@ public class MainLogginActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 psw[0] = input.getText().toString();
-
-
                 mAuth.signInWithEmailAndPassword(email_fb,psw[0])
                         .addOnCompleteListener(MainLogginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override

@@ -292,7 +292,7 @@ public class MainActivityCompleteRegister extends AppCompatActivity {
                                     Log.d("Vinculacion", "linkWithCredential:success");
                                     //Login
                                     Toast.makeText(MainActivityCompleteRegister.this, "Se ha enviado un correo de verificación", Toast.LENGTH_SHORT).show();
-                                }
+                                    finish();                                }
                             });
                         } else {
                             Log.e("Vinculacion", "linkWithCredential:failure", task.getException());
@@ -338,7 +338,7 @@ public class MainActivityCompleteRegister extends AppCompatActivity {
                 hideProgressDialog();// Oculto el progress
                 Log.e("RESPUESTA SQL: ", "" + response); // imprimo la respuesta
                 // Si la respuesta del web service es que guardo
-                if (response.trim().equalsIgnoreCase("registrado")) {
+                if (response.trim().equalsIgnoreCase("registradoregistrado")) {
 
                     Toast.makeText(MainActivityCompleteRegister.this, "Verifique su correo para validar su usuario", Toast.LENGTH_SHORT).show();
                     //Guardo los datos en sqlite
@@ -347,7 +347,7 @@ public class MainActivityCompleteRegister extends AppCompatActivity {
                     //Ya inicio sesion entonces paso al Mainactivity
                     Intent intent = new Intent(MainActivityCompleteRegister.this, MainLogginActivity.class);
                     startActivity(intent);
-                    finish();
+
                 } else {
                     //Si la respuesta del web service es error, no se pudo escribir en la 000webhost, entonces lo borro del fire
                     try {

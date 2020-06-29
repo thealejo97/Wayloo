@@ -1,6 +1,7 @@
 package com.wayloo.wayloo.ui.anadirpeluqueria;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.wayloo.wayloo.MainActivity;
 import com.wayloo.wayloo.MainActivityRegistarUser;
 import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
@@ -77,7 +79,7 @@ public class AnadirPeluqueriaFragment extends Fragment {
     }
 
     private void crearPeluqueria() {
-        //Inicio los datos de Pluqueria
+        //Saco los datos de Pluqueria escritos
         Nit = etNit.getText().toString();
         Nombre = etNombre.getText().toString();
         Dir = EtDir.getText().toString();
@@ -88,10 +90,8 @@ public class AnadirPeluqueriaFragment extends Fragment {
         if( Nit.isEmpty() || Nombre.isEmpty() || Dir.isEmpty() || Tel.isEmpty() || TelDueno.isEmpty() || Ciud.isEmpty()  || Ciud.equals("Seleccione su ciudad")){
             Toast.makeText(getContext(), "Error, los campos no deben de estar vacios", Toast.LENGTH_SHORT).show();
         }else {
-
-
             request = Volley.newRequestQueue(getContext());
-            //Lleno los demas datos relacionados con el barbero
+            //Lleno la ip
             String ip =getString(R.string.ip_way);
             String url = ip + "/consultas/registrar_Barberia.php?";
             Log.e("URL DEL POST", url);
@@ -105,11 +105,15 @@ public class AnadirPeluqueriaFragment extends Fragment {
                     if (response.trim().equalsIgnoreCase("Registraregistraregistra") || response.trim().equalsIgnoreCase("registra") ) {
                         Toast.makeText(getContext(), "Se ha la registrado la barberia con exito", Toast.LENGTH_SHORT).show();
                         updateROLSQLITE("1");
-                        Fragment miFragment = null;
-                        miFragment = new MisPeluqueriasFragment();
-                       // getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
                         getActivity().finish();
+
+                        //Reinicia la aplicacion
+                        Intent i = getContext().getPackageManager()
+                                .getLaunchIntentForPackage( getContext().getPackageName() );
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
                     } else {
+                        Log.e("Error registrando Barb", response.toString());
                         Toast.makeText(getContext(), "No se ha registrado la barberia", Toast.LENGTH_SHORT).show();
                     }
 
