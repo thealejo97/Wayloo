@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.mispeluqueros.mispeluquerosfragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.mispeluqueros.mispeluquerosfragment"
+    android:orientation="vertical"
+    android:background="@color/backGroudMain"
+    android:padding="10dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- Layout del titulo y editar -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</FrameLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tvTituloMisPeluqueros"
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="25dp"
+                        android:textColor="@color/whiteText"
+                        android:text="Nombre de Peluqueria    "
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:tint="@color/whiteText"
+                        android:src="@drawable/ic_editar">
+                    </ImageView>
+                </LinearLayout>
+        <TextView
+            android:id="@+id/tvTituDir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/whiteText"
+            android:text="Dirección"/>
+        </LinearLayout>
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/whiteText"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        />
+    <!-- Layout del titulo y anadir -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="Mis peluqueros   "
+                android:textColor="@color/whiteText"/>
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/agregar"
+                android:id="@+id/anadirPeluqueroaPeluqueriaBTN"
+                android:tint="@color/whiteText"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/idRecycleMisPeluqueros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@android:color/white">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>

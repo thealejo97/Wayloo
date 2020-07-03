@@ -36,7 +36,6 @@ import java.util.ArrayList;
 
 public class HomeFragment extends Fragment implements com.android.volley.Response.Listener<JSONObject>, Response.ErrorListener  {
 
-    private HomeViewModel homeViewModel;
     RecyclerView recyclerUsuarios;
     ArrayList<Usuario> listaUsuarios;
 
@@ -47,8 +46,6 @@ public class HomeFragment extends Fragment implements com.android.volley.Respons
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////

@@ -32,6 +32,7 @@ import com.wayloo.wayloo.entidades.Usuario;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.wayloo.wayloo.ui.anadirpeluqueria.AnadirPeluqueriaFragment;
 import com.wayloo.wayloo.ui.editarbarber.EditarBarberiaFragment;
+import com.wayloo.wayloo.ui.mispeluqueros.mispeluquerosfragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,8 +176,9 @@ public class MisPeluqueriasFragment extends Fragment implements com.android.voll
                             data.putString("calificacion",listaPeluquerias.get(position).getCalificacion());
                             data.putString("ciudad",listaPeluquerias.get(position).getCiudad());
                             data.putString("direccion",listaPeluquerias.get(position).getDireccion());
+                            //Editando aquiii
                             Fragment miFragment = null;
-                            miFragment = new EditarBarberiaFragment();
+                            miFragment = new mispeluquerosfragment();
                             miFragment.setArguments(data);
                             getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
 

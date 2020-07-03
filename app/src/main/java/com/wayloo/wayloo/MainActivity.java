@@ -1,6 +1,7 @@
 package com.wayloo.wayloo;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -27,11 +28,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -77,6 +81,7 @@ import org.json.JSONArray;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -257,9 +262,71 @@ public class MainActivity extends AppCompatActivity  {
                     startActivity(intent);
                 }
             });
-    //    }
+
+            actualizarRolUsuario(traerId_firebaseQLITE());
     }
 
+    private void actualizarRolUsuario(String frb) {
+        request = Volley.newRequestQueue(MainActivity.this);
+
+        String ip =getString(R.string.ip_way);
+
+        String url = ip + "/consultas/consultarRol.php?";
+
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e("Response Update go ", response);
+                if(!response.equalsIgnoreCase("")) {
+                    if(traerROLSQLITE().equals(response)){
+                        Log.e("Rol", "roles iguales");
+                    }else {
+                        updateROLSQLITE(response, frb);
+                        Toast.makeText(MainActivity.this, "Cambios detectados por favor reinicie la aplicación", Toast.LENGTH_SHORT).show();
+                        reiniciarApp();
+                    }
+                }else{
+                    Toast.makeText(MainActivity.this, "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(MainActivity.this, "Error de conexión verifique su internet.", Toast.LENGTH_SHORT).show();
+                Log.e("Response Update ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("id_firebase", frb);
+
+                return parameters;
+            }
+
+        };
+        request.add(stringRequest);
+
+
+    }
+    private void reiniciarApp() {
+        Intent mStartActivity = new Intent(MainActivity.this, MainActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        System.exit(0);
+    }
+
+
+    public void updateROLSQLITE(final String new_rol, String id_FirebaseCurrentUser) {
+        SQLiteDatabase db = usdbh.getReadableDatabase();
+        db.execSQL("UPDATE CurrentUsuario SET  rol = '" + new_rol + "'  WHERE id_firebase = '"+ id_FirebaseCurrentUser+"'");
+
+    }
     private void actualizarRealTime() {
         SharedPreferences tokensNotificacion
                 = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -567,7 +634,6 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
-
         PackageInfo packageInfo;
         try{
             packageInfo = this.getPackageManager().getPackageInfo(getPackageName(),0);
