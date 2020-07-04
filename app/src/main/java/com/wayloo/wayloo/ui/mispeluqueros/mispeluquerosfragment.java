@@ -34,6 +34,7 @@ import com.wayloo.wayloo.entidades.Usuario;
 import com.wayloo.wayloo.ui.anadirpeluqueroapeluqueria.anadirpeluqueroapeluqueria;
 import com.wayloo.wayloo.ui.editarbarber.EditarBarberiaFragment;
 import com.wayloo.wayloo.ui.home.HomeViewModel;
+import com.wayloo.wayloo.ui.perfildebarbero.barberoperfilFragment;
 import com.wayloo.wayloo.zoomBarberia;
 
 import org.json.JSONArray;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 
 public class mispeluquerosfragment extends Fragment implements com.android.volley.Response.Listener<JSONObject>, Response.ErrorListener  {
 
-    private HomeViewModel homeViewModel;
     RecyclerView recyclerPeluquero;
     ArrayList<BarberosU> listaBarberos;
 
@@ -106,8 +106,6 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
             @Override
             public void onClick(View v) {
 
-
-
                 Fragment miFragment = new EditarBarberiaFragment();
                 String NIT = getArguments().getString("NIT");
                 String tel = getArguments().getString("telefono");
@@ -115,8 +113,6 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
                 String cal = getArguments().getString("calificacion");
                 String ciud = getArguments().getString("ciudad");
                 String dir = getArguments().getString("direccion");
-
-
 
                 Bundle datosPel = new Bundle();
                 datosPel.putString("telefono",tel);
@@ -127,7 +123,7 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
                 datosPel.putString("NIT",NIT);
 
                 miFragment.setArguments(datosPel);
-                getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+                getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).addToBackStack(null).commit();
             }
         });
 
@@ -163,8 +159,7 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
 
             for (int i=0;i < cantidadUsuarios;i++){
                 barberosU=new BarberosU();
-                JSONObject jsonObject=null;
-                jsonObject=json.getJSONObject(i);
+                JSONObject jsonObject=json.getJSONObject(i);
                 barberosU.setNombre(jsonObject.optString("nombre_p"));
                 barberosU.setTelefono(jsonObject.optString("tel_p"));
                 barberosU.setApellido_P(jsonObject.optString("apellido_p"));
@@ -205,8 +200,23 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
 
                             int position = recyclerView.getChildAdapterPosition(child);
 
+                            Fragment miFragment = new barberoperfilFragment();
+                            String nombr = listaBarberos.get(position).getNombre()+ " "+listaBarberos.get(position).getApellido_P();
+                            String tel = listaBarberos.get(position).getTelefono();
+                            String cal = listaBarberos.get(position).getCalificacion();
+                            String fir= listaBarberos.get(position).getFireB();
+                            String hora = listaBarberos.get(position).geth_fin() + "-"+listaBarberos.get(position).geth_inicio();
 
+                            Log.e("Datos a pasar",  tel+" "+nombr+" "+cal+" "+hora);
+                            Bundle datosPel = new Bundle();
+                            datosPel.putString("telefono",tel);
+                            datosPel.putString("nombre",nombr);
+                            datosPel.putString("calificacion",cal);
+                            datosPel.putString("hora",hora);
+                            datosPel.putString("fire",fir);
 
+                            miFragment.setArguments(datosPel);
+                            getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).addToBackStack(null).commit();
 
 
 

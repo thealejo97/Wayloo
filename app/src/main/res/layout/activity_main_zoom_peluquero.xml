@@ -40,14 +40,6 @@
             android:text="Telefono"
             android:textColor="@color/whiteText"></TextView>
 
-        <TextView
-            android:id="@+id/CaleBarS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Calificacion"
-            android:visibility="gone"
-            android:textColor="@color/whiteText"></TextView>
 
         <TextView
             android:id="@+id/hInicioBarS"
@@ -57,15 +49,6 @@
             android:text="Inicio Turno"
             android:textColor="@color/whiteText"></TextView>
 
-        <TextView
-            android:id="@+id/HfinBarS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="3dp"
-            android:visibility="gone"
-            android:text="Fin Turno"
-            android:textColor="@color/whiteText"></TextView>
 
         <RatingBar
             style="?android:attr/ratingBarStyleIndicator"

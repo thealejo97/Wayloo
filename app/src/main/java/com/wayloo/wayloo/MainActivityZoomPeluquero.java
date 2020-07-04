@@ -79,8 +79,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
     private TextView nombreTv;
     private TextView telefTV;
     private TextView hInicioTV;
-    private TextView hfinTV;
-    private TextView calTV;
+
     private Button botonRegistrar;
     StringRequest stringRequestS;
     private Time fecFormatoTime;
@@ -115,16 +114,12 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         nombreTv = findViewById(R.id.NomBarS);
         telefTV= findViewById(R.id.TelBarS);
         hInicioTV = findViewById(R.id.hInicioBarS);
-        hfinTV = findViewById(R.id.HfinBarS);
-        calTV = findViewById(R.id.CaleBarS);
         botonRegistrar = findViewById(R.id.buttonReservarCita);
 
         //Coloco los datos en los campos
         nombreTv.setText(nombre+" "+apellido);
         telefTV.setText(telefono);
         hInicioTV.setText("Turno: "+hInicio + " a "+ hFin);
-        hfinTV.setText("Hora Fin: "+hFin);
-        calTV.setText("Calificación: "+calificacion);
         imageViewLogomini = findViewById(R.id.imageViewPrincipalFotoB);
         cargarWebImagen(fireB);
 
@@ -154,48 +149,6 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
 
     }
 
-    /*private String diaSemHoy() {
-        String currentDayLetter;
-        // Creamos una instancia del calendario
-        Calendar now = Calendar.getInstance();
-        // Array con los dias de la semana
-        String[] strDays = new String[]{
-                "Domingo",
-                "Lunes",
-                "Martes",
-                "Miercoles",
-                "Jueves",
-                "Viernes",
-                "Sabado"};
-        // El dia de la semana inicia en el 1 mientras que el array empieza en el 0
-        currentDayLetter= strDays[now.get(Calendar.DAY_OF_WEEK) - 1];
-        Log.e("Current day", currentDayLetter+" Dia hoy");
-        switch (currentDayLetter){
-            case "Domingo":
-                currentDayLetter="D";
-                break;
-            case "Lunes":
-                currentDayLetter="L";
-                break;
-            case "Martes":
-                currentDayLetter="M";
-                break;
-            case "Miercoles":
-                currentDayLetter="MI";
-                break;
-            case "Jueves":
-                currentDayLetter="J";
-                break;
-            case "Viernes":
-                currentDayLetter="V";
-                break;
-            case "Sabado":
-                currentDayLetter="S";
-                break;
-        }
-        return currentDayLetter;
-    }
-    */
     private String getLetraDiaSemHoy(Calendar now) {
         String currentDayLetter;
         // Creamos una instancia del calendario
@@ -237,6 +190,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         }
         return currentDayLetter;
     }
+
     private void rellenarTablaTurnos(Date horaOriginal, Date hFinalOriginal){
         //Rellena la tabla original con los turnos y los estados en blanco
         //Recibo las foras inicial y finales del peluquero

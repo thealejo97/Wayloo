@@ -248,12 +248,13 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
                     Log.e("Response Update go ", response);
                     if(response.equalsIgnoreCase("registrado")) {
                         Toast.makeText(getContext(), "Barbero añadido", Toast.LENGTH_SHORT).show();
+                        listaClientes.clear();
+                        recyclerBarberos.setAdapter(null);
                         cargarWebServices(etCelular.getText().toString());
                     }else{
                         Toast.makeText(getContext(), "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
                     }
                 }
-
             }, new Response.ErrorListener() {
 
                 @Override

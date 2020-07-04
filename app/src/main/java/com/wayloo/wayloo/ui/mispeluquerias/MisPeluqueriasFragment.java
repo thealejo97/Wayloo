@@ -180,7 +180,7 @@ public class MisPeluqueriasFragment extends Fragment implements com.android.voll
                             Fragment miFragment = null;
                             miFragment = new mispeluquerosfragment();
                             miFragment.setArguments(data);
-                            getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+                            getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).addToBackStack(null).commit();
 
                             return true;
                         }
