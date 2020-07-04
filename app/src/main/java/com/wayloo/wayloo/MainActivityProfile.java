@@ -30,6 +30,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.net.wifi.hotspot2.pps.Credential;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +38,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,6 +63,8 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.wayloo.wayloo.ui.Utilidades;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -112,7 +116,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     Bitmap bitmapSINREDONDEAR;
     private static final int COD_SELECCIONA = 10;
     private static final int COD_FOTO = 20;
-    private final int MIS_PERMISOS = 100;    EditText tel_u_TV, nombTV, apllTV, emailTV, ciudadTV, rolTV;
+    private final int MIS_PERMISOS = 100;    EditText tel_u_TV, nombTV, apllTV, emailTV, ciudadTV;
 
 
     private Button editarButton;
@@ -150,7 +154,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         apllTV = findViewById(R.id.ApellBarSPerfil);
         emailTV = findViewById(R.id.emailPerfil);
         ciudadTV = findViewById(R.id.CiudadPerfil);
-        rolTV = findViewById(R.id.rolPerfil);
         texCambiar = findViewById(R.id.textViewTituCambiar);
         btnCambiarClave = findViewById(R.id.textViewCambiarContra);
         showProgressDialog("Cargando Información del perfil.", "Por favor espere");
@@ -164,20 +167,23 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
         consultaPerfil(id_FirebaseCurrentUser);
 
+        //Actualiza los datos en la BD Externa
+
         editarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String new_tel, new_nomb, new_apell, new_email, new_ciudad,
-                        new_rol;
+                String new_email = emailTV.getText().toString();
+                passwordPromp(new_email);
+
+                /*
+                String new_tel, new_nomb, new_apell, new_email, new_ciudad, new_rol;
                 new_tel = tel_u_TV.getText().toString();
                 new_nomb = nombTV.getText().toString();
                 new_apell = apllTV.getText().toString();
-
                 new_email = emailTV.getText().toString();
                 new_ciudad = ciudadTV.getText().toString();
-                new_rol = rolTV.getText().toString();
 
-                updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad, new_rol);
+                updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad);*/
 
             }
         });
@@ -782,7 +788,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         nombTV = findViewById(R.id.NomBarSPerfil);
         emailTV = findViewById(R.id.emailPerfil);
         ciudadTV = findViewById(R.id.CiudadPerfil);
-        rolTV = findViewById(R.id.rolPerfil);
 
         cargarWebImagen(id_firebase);
         tel_u_TV.setText(tel_usuario);
@@ -793,7 +798,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
         emailTV.setText(email_usuario);
         ciudadTV.setText(ciudad_usuario);
-        rolTV.setText(rol_usuario);
 
 
     }
@@ -922,12 +926,10 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         progress.dismiss();
     }
 
-    private void updateBDRemota(final String new_tel, final String new_nomb, final String new_apell, final String new_PWTV, final String new_email, final String new_ciudad,
-                                final String new_rol) {
+    private void updateBDRemota(final String new_tel, final String new_nomb, final String new_apell, final String new_PWTV, final String new_email, final String new_ciudad) {
 
 
-        if (new_tel.equalsIgnoreCase("") || new_PWTV.equalsIgnoreCase("") || new_email.equalsIgnoreCase("") || new_ciudad.equalsIgnoreCase("") ||
-                new_rol.equalsIgnoreCase("")) {
+        if (new_tel.equalsIgnoreCase("") || new_PWTV.equalsIgnoreCase("") || new_email.equalsIgnoreCase("") || new_ciudad.equalsIgnoreCase("")) {
             Toast.makeText(this, "ERROR LOS CAMPOS NO PUEDEN ESTAR VACIOS", Toast.LENGTH_LONG).show();
         } else {
                             request = Volley.newRequestQueue(getApplicationContext());
@@ -941,31 +943,29 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                             StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
+                                    hideProgressDialog();
                                     Log.e("Response Update go ", response);
-                                    Toast.makeText(MainActivityProfile.this, "Perfil Actualizado", Toast.LENGTH_SHORT).show();
-                                    changeEmailFirebase(new_email);
-                                    updateSQLITE(new_tel, (new_nomb + " " + finalNew_apell), new_PWTV, new_email, new_ciudad, new_rol);
+                                    updateSQLITE(new_tel, (new_nomb + " " + finalNew_apell), new_email, new_ciudad, traerROLSQLITE());
                                 }
 
                             }, new Response.ErrorListener() {
 
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
+                                    hideProgressDialog();
                                     Log.e("Response Update ", error.toString());
+                                    changeEmailFirebase(traerEmailSQLITE(), "error",null);
                                 }
                             }) {
                                 @Override
                                 protected Map<String, String> getParams() throws AuthFailureError {
                                     Map<String, String> parameters = new HashMap<String, String>();
                                     String imagen = convertirImgString(bitmapSINREDONDEAR);
-                                    parameters.put("taac", ConsultaCurrentUserTELSQLITE());
                                     parameters.put("tp", new_tel);
                                     parameters.put("np", new_nomb);
                                     parameters.put("ap", new_apell);
-                                    parameters.put("pp", "Descontinuado");
                                     parameters.put("ep", new_email);
                                     parameters.put("cp", new_ciudad);
-                                    parameters.put("rp", new_rol);
                                     parameters.put("imagen", imagen);
                                     parameters.put("id_firebase", id_FirebaseCurrentUser);
 
@@ -1023,7 +1023,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         progress.dismiss();
     }
 
-    public void updateSQLITE(final String new_tel, final String new_nomb, final String new_PWTV, final String new_email, final String new_ciudad, final String new_rol) {
+    public void updateSQLITE(final String new_tel, final String new_nomb, final String new_email, final String new_ciudad, final String new_rol) {
 
 
         SQLiteDatabase db = usdbh.getReadableDatabase();
@@ -1264,23 +1264,73 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     }
 
 
-    private void changeEmailFirebase(String email) {
-        mFirebaseUser.updateEmail(email)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+    private void changeEmailFirebase(String email, String Tag, String password) {
 
-                        if (task.isSuccessful()) {
-                            Toast.makeText(MainActivityProfile.this, "Email Actualizado", Toast.LENGTH_SHORT).show();
-                            return;
+
+        showProgressDialog("Actualizando perfil", "Espere mientras se contacta con el servidor");
+
+            AuthCredential cr7 = EmailAuthProvider.getCredential(traerEmailSQLITE(), password);
+            mFirebaseUser.reauthenticate(cr7).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        if (!Tag.equals("error")) {
+                            mFirebaseUser.updateEmail(email)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            if (task.isSuccessful()) {
+
+                                                String new_tel, new_nomb, new_apell, new_email, new_ciudad, new_rol;
+                                                new_tel = tel_u_TV.getText().toString();
+                                                new_nomb = nombTV.getText().toString();
+                                                new_apell = apllTV.getText().toString();
+                                                new_email = emailTV.getText().toString();
+                                                new_ciudad = ciudadTV.getText().toString();
+
+                                                updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad);
+                                                return;
+                                            }
+
+                                            if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                                                hideProgressDialog();
+                                                Log.e("Error cambiando FR", task.getException().toString());
+                                                Toast.makeText(MainActivityProfile.this, "Error actualizando perfil", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        } else {
+                            mFirebaseUser.updateEmail(email)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(MainActivityProfile.this, "Error BD SQL Caida", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+
+                                            if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                                                Log.e("Error cambiando FR", task.getException().toString());
+                                                Toast.makeText(MainActivityProfile.this, "Error actualizando perfil", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                         }
 
-                        if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
-                            Toast.makeText(MainActivityProfile.this, "Error actualizando Email", Toast.LENGTH_SHORT).show();
-                        }
+
+                    } else {
+                        hideProgressDialog();
+                        Toast.makeText(MainActivityProfile.this, "Error contraseña erronea.", Toast.LENGTH_SHORT).show();
+                        Log.e("Clave mala", "Error auth failed");
                     }
-                });
-    }
+                }
+            });
+
+
+        }
+
 
     @Override
     public void ResultadoDialogo(String nit, String HI, String HF, String diasLaborales) {
@@ -1297,7 +1347,73 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     }
 
 
+    //Trae el rol del usuario que inicio sesion en la BDSQLITE
+    private String traerROLSQLITE(){
+        String rolUsuInterno= "UnKnow User";
+        SQLiteDatabase db = usdbh.getWritableDatabase();
+        Cursor c = db.rawQuery(" SELECT rol FROM CurrentUsuario;", null); // Creamos la consulta
+        if (c.moveToFirst()) {
+            //Recorremos el cursor hasta que no haya más registros
+            do {
+                rolUsuInterno= c.getString(0);// Obtenemos la respuesta, debe tener una sola fila
 
+            } while(c.moveToNext());
+        }
+        return rolUsuInterno;
+    }
+
+    private String traerEmailSQLITE(){
+        String name= "UnKnow User";
+        SQLiteDatabase db = usdbh.getWritableDatabase();
+        Cursor c = db.rawQuery(" SELECT email FROM CurrentUsuario;", null);
+        if (c.moveToFirst()) {
+            //Recorremos el cursor hasta que no haya más registros
+            do {
+                name= c.getString(0);
+
+            } while(c.moveToNext());
+        }
+        return name;
+    }
+
+    public void passwordPromp(String new_email)
+    {
+        Context context = MainActivityProfile.this;
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.promp_layout, null);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText userInput = (EditText) promptsView
+                .findViewById(R.id.editTextDialogUserInput);
+
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setNegativeButton("Cancelar",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.dismiss();
+                            }
+                        })
+                .setPositiveButton("Continuar",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                changeEmailFirebase(new_email,"actualizacion", userInput.getText().toString());
+
+                            }
+
+                        }
+
+                );
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
 }
 
 

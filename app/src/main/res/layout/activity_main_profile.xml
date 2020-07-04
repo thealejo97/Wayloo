@@ -27,7 +27,6 @@
                 android:stateListAnimator="@null"
                 android:text="Guardar"></Button>
 
-
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
@@ -75,7 +74,6 @@
                 android:layout_height="wrap_content"
                 android:text="Telefono"
                 android:textColor="@color/whiteText"></EditText>
-
 
                 <TextView
                     android:id="@+id/textViewTituPerfilNombre"

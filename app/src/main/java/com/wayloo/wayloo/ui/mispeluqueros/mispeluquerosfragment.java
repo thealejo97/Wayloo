@@ -32,6 +32,7 @@ import com.wayloo.wayloo.adapters.UsuariosAdapters;
 import com.wayloo.wayloo.entidades.BarberosU;
 import com.wayloo.wayloo.entidades.Usuario;
 import com.wayloo.wayloo.ui.anadirpeluqueroapeluqueria.anadirpeluqueroapeluqueria;
+import com.wayloo.wayloo.ui.editarbarber.EditarBarberiaFragment;
 import com.wayloo.wayloo.ui.home.HomeViewModel;
 import com.wayloo.wayloo.zoomBarberia;
 
@@ -54,6 +55,7 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
     TextView tvMispq,tvDir;
+    private ImageView btnEditarBarberia;
 
 
     public mispeluquerosfragment() {
@@ -80,6 +82,7 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
         recyclerPeluquero.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerPeluquero.setHasFixedSize(true);
         request= Volley.newRequestQueue(getContext());
+        btnEditarBarberia = vista.findViewById(R.id.editarBarberia);
 
 
         cargarWebServices();
@@ -99,6 +102,34 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
             }
         });
 
+        btnEditarBarberia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                Fragment miFragment = new EditarBarberiaFragment();
+                String NIT = getArguments().getString("NIT");
+                String tel = getArguments().getString("telefono");
+                String nombr = getArguments().getString("nombre");
+                String cal = getArguments().getString("calificacion");
+                String ciud = getArguments().getString("ciudad");
+                String dir = getArguments().getString("direccion");
+
+
+
+                Bundle datosPel = new Bundle();
+                datosPel.putString("telefono",tel);
+                datosPel.putString("nombre",nombr);
+                datosPel.putString("calificacion",cal);
+                datosPel.putString("ciudad",ciud);
+                datosPel.putString("direccion",dir);
+                datosPel.putString("NIT",NIT);
+
+                miFragment.setArguments(datosPel);
+                getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+            }
+        });
 
         return vista;
     }
@@ -173,6 +204,12 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
                         if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
 
                             int position = recyclerView.getChildAdapterPosition(child);
+
+
+
+
+
+
 
                             return true;
                         }

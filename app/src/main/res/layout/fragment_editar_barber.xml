@@ -117,20 +117,6 @@
                     android:text="Ciudad"
                     android:textColor="@color/whiteText"></EditText>
 
-                <TextView
-                    android:id="@+id/textViewTituPerfilRol"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="rol"
-                    android:visibility="gone"
-                    android:textColor="@color/whiteText" />
-                <EditText
-                    android:id="@+id/rolPerfil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rol"
-                    android:visibility="gone"
-                    android:textColor="@color/whiteText"></EditText>
 
 
             </LinearLayout>
