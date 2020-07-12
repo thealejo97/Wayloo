@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/desasociarBr"
-            android:text="  Eliminar Barbero  "
+            android:text="  Desvincular Barbero  "
             android:background="@drawable/shapesred"/>
     </LinearLayout>
 

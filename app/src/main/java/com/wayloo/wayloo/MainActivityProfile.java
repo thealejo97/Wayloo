@@ -65,6 +65,7 @@ import com.android.volley.toolbox.Volley;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.wayloo.wayloo.ui.Utilidades;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -267,7 +268,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         btnEliminarPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eliminarPerfilBDRemota(ConsultaCurrentUser());//se elimina con el firebase
+                eliminarPerfilBDRemota(ConsultaCurrentUserTELSQLITE());//se elimina con el firebase
             }
         });
 
@@ -645,10 +646,10 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     }
 
-    private void eliminarPerfilBDRemota(final String fireaEliminar) {
+    private void eliminarPerfilBDRemota(final String telefono) {
 
 
-        if (fireaEliminar.equalsIgnoreCase("")) {
+        if (telefono.equalsIgnoreCase("")) {
             Toast.makeText(this, "ERROR ELIMINANDO", Toast.LENGTH_LONG).show();
         } else {
             final Utilidades utl = new Utilidades();
@@ -691,8 +692,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> parameters = new HashMap<String, String>();
-                            String imagen = convertirImgString(bitmapSINREDONDEAR);
-                            parameters.put("faeliminar", fireaEliminar);
+                            parameters.put("telefono", telefono);
                             return parameters;
                         }
 
@@ -1282,17 +1282,25 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
                                             if (task.isSuccessful()) {
 
-                                                String new_tel, new_nomb, new_apell, new_email, new_ciudad, new_rol;
-                                                new_tel = tel_u_TV.getText().toString();
-                                                new_nomb = nombTV.getText().toString();
-                                                new_apell = apllTV.getText().toString();
-                                                new_email = emailTV.getText().toString();
-                                                new_ciudad = ciudadTV.getText().toString();
 
-                                                updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad);
-                                                return;
+                                                mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                        ///////////
+
+                                                        String new_tel, new_nomb, new_apell, new_email, new_ciudad, new_rol;
+                                                        new_tel = tel_u_TV.getText().toString();
+                                                        new_nomb = nombTV.getText().toString();
+                                                        new_apell = apllTV.getText().toString();
+                                                        new_email = emailTV.getText().toString();
+                                                        new_ciudad = ciudadTV.getText().toString();
+
+                                                        updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad);
+                                                        return;
+                                                    }
+                                                });
                                             }
-
                                             if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
                                                 hideProgressDialog();
                                                 Log.e("Error cambiando FR", task.getException().toString());

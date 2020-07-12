@@ -320,42 +320,50 @@ public class MainLogginActivity extends AppCompatActivity {
                     startActivity(intent);
 
                 } else {
-                    if (mAuth.getCurrentUser().isEmailVerified()) {
-                        String tel_usuario = null;
-                        try {
-                            //Creo un jsonobject con el string
-                            JSONObject jsonObject = new JSONObject(response.toString());
-                            //extracting json array from response string
-                            JSONArray json = jsonObject.getJSONArray("already");
-
-                            for (int i = 0; i < json.length(); i++) {
-                                JSONObject jsonObject2 = json.getJSONObject(i);
-                                tel_usuario = jsonObject2.optString("tel_usuario");
-                                id_firebase = jsonObject2.optString("id_firebase");
-                                estadoUsu = jsonObject2.optString("estado");
-                                rol_u = jsonObject2.optString("rol_usuario");
-                            }
-                            hideProgressDialog();
-                            Log.e("Estado estado usu " ,estadoUsu+ "55");
-                            if(estadoUsu.equals("0")){
-                                FirebaseAuth.getInstance().signOut();
-                                LoginManager.getInstance().logOut();
-                                Toast.makeText(MainLogginActivity.this, "Error, el usuario ha sido deshabilitado, Comuniquese con soporte.", Toast.LENGTH_LONG).show();
-                                hideProgressDialog();
-                            }else {
-                                hideProgressDialog();
-                                salvarPermanente(id_firebase, nombre_fb, emaildeEseTelefon, rol_u, tel_usuario);
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    } else {
+                    if (response.equalsIgnoreCase("desactivado")) {
+                        mAuth.signOut();
                         LoginManager.getInstance().logOut();
-                        FirebaseAuth.getInstance().signOut();
-                        Toast.makeText(MainLogginActivity.this, "Error debe validar su usuario verifique su correo electronico", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainLogginActivity.this, "La cuenta se encuentra desactivada, envie un correo electronico a " +
+                                "soporte tecnico", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        if (mAuth.getCurrentUser().isEmailVerified()) {
+                            String tel_usuario = null;
+                            try {
+                                //Creo un jsonobject con el string
+                                JSONObject jsonObject = new JSONObject(response.toString());
+                                //extracting json array from response string
+                                JSONArray json = jsonObject.getJSONArray("already");
+
+                                for (int i = 0; i < json.length(); i++) {
+                                    JSONObject jsonObject2 = json.getJSONObject(i);
+                                    tel_usuario = jsonObject2.optString("tel_usuario");
+                                    id_firebase = jsonObject2.optString("id_firebase");
+                                    estadoUsu = jsonObject2.optString("estado");
+                                    rol_u = jsonObject2.optString("rol_usuario");
+                                }
+                                hideProgressDialog();
+                                Log.e("Estado estado usu ", estadoUsu + "55");
+                                if (estadoUsu.equals("0")) {
+                                    FirebaseAuth.getInstance().signOut();
+                                    LoginManager.getInstance().logOut();
+                                    Toast.makeText(MainLogginActivity.this, "Error, el usuario ha sido deshabilitado, Comuniquese con soporte.", Toast.LENGTH_LONG).show();
+                                    hideProgressDialog();
+                                } else {
+                                    hideProgressDialog();
+                                    salvarPermanente(id_firebase, nombre_fb, emaildeEseTelefon, rol_u, tel_usuario);
+                                }
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            LoginManager.getInstance().logOut();
+                            FirebaseAuth.getInstance().signOut();
+                            Toast.makeText(MainLogginActivity.this, "Error debe validar su usuario verifique su correo electronico", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
@@ -399,16 +407,13 @@ public class MainLogginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         hideProgressDialog();
-                        // Account exists with different credential. Assume the developer wants to
-                        // continue and link new credential to existing account.
                         //Verificar que el usuario no exista con el correo y OTRA CREDENCIAL
                         if (!task.isSuccessful() ){
                             if(task.getException() instanceof FirebaseAuthUserCollisionException) {
                             FirebaseAuthUserCollisionException exception =
                                     (FirebaseAuthUserCollisionException) task.getException();
                             Log.e("Colisiono", exception.getErrorCode());
-                            if (exception.getErrorCode().equals(
-                                    "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") ){
+                            if (exception.getErrorCode().equals("ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") ){
                                 // Lookup existing account’s provider ID.
                                 Log.e("Dandole email", email_fb);
                                 mAuth.fetchSignInMethodsForEmail(email_fb).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
@@ -417,14 +422,8 @@ public class MainLogginActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             if (task.getResult().getSignInMethods().contains(
                                                     EmailAuthProvider.PROVIDER_ID)) {
-                                                // Password account already exists with the same email.
-                                                // Ask user to provide password associated with that account.
-                                                // Sign in with email and the provided password.
-                                                // If this was a Google account, call signInWithCredential instead.
-
-                                                //ERROR AQUI HAY UN ERROR
-
-                                                vincularEmailFacebookProvider(credential);
+                                                    //ERROR AQUI HAY UN ERROR
+                                                    vincularEmailFacebookProvider(credential);
                                             }
                                         }
                                     }

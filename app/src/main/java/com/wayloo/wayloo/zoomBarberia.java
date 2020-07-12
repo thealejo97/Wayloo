@@ -158,6 +158,7 @@ public class zoomBarberia extends AppCompatActivity implements com.android.volle
                                 intent.putExtra("h_fin",listaBarberos.get(position).geth_fin());
                                 intent.putExtra("calificacion",listaBarberos.get(position).getCalificacion());
                                 intent.putExtra("fireB",listaBarberos.get(position).getFireB());
+                                intent.putExtra("barberiaDelBarbero", NIT);
 
                                 startActivity(intent);
 

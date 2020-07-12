@@ -74,11 +74,13 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
     private String hFin;
     private String calificacion;
     private String fireB;
+    private String nitDelBarbeto;
     private ImageView imageViewLogomini;
     private RequestQueue request;
     private TextView nombreTv;
     private TextView telefTV;
     private TextView hInicioTV;
+
 
     private Button botonRegistrar;
     StringRequest stringRequestS;
@@ -108,6 +110,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         hFin = getIntent().getStringExtra("h_fin");
         calificacion = getIntent().getStringExtra("calificacion");
         fireB = getIntent().getStringExtra("fireB");
+        nitDelBarbeto = getIntent().getStringExtra("barberiaDelBarbero");
 
         //Inicializo los campos
         rBar.setRating(Integer.parseInt(calificacion));
@@ -135,7 +138,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         //Cuando le da click a la fecha para buscar
         fechaB = findViewById(R.id.textViewSeleccionarFecha);
         fechaPicker();
-        String fActual =getCurrentDay();//Obtengo la fecha actual
+        String fActual = getCurrentDay();//Obtengo la fecha actual
         fechaB.setText(fActual);// La coloco
 
         if(fechaB.equals(getCurrentDay())) {// Si la fecha es la de hoy
@@ -143,6 +146,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         }
         Calendar now = Calendar.getInstance();
         String diaSem = getLetraDiaSemHoy(now);
+        //Consulta si el peluquer trabaja el dia
         consultaDiasLaboralesBarbero(telefono,fActual,diaSem);
 
 
@@ -219,7 +223,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         tbLayout.addView(row1);
 
         //Inicializo un date sumandole 0 horas y 0 minutos
-        Date hSumada=sumaHora(horaOriginal,0,0);
+        Date hSumada = sumaHora(horaOriginal,0,0);
         //Total de cantidad de cupos miro cuantas reservas de 45 minutos se pueden poner entre la hinicial y la hfinal
         int total=cantidadDeCupos(horaOriginal,hFinalOriginal);
         //For que crea las filas
@@ -240,22 +244,22 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
 
             tv.setGravity(Gravity.CENTER);
             tv.setTextColor(Color.WHITE);
-            tv.setId(i+1000);
 
             tvE.setGravity(Gravity.CENTER);
             tvE.setTextColor(Color.GREEN);
+
             row.addView(tv);
             row.addView(tvE);
-           // row.addView(chb);
             row.setGravity(Gravity.CENTER);
-
             tbLayout.addView(row);
         }
     }
 
     private int cantidadDeCupos(Date horaOriginal, Date hFinalOriginal){
         int contador=0;
-       // Log.e("Primera coparacion",horaOriginal.toString() + "-"+ hFinalOriginal.toString());
+        // 1 si la primera es mas grande que la segunda
+        // 0 si son iguales
+        //-1 si la primera es mas pequeña que la segunda
         while(horaOriginal.compareTo(hFinalOriginal) <0){
             contador++;
             horaOriginal=sumaHora(horaOriginal,0,45);
@@ -311,12 +315,15 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 fechaB.setText(sdf.format(myCalendar.getTime()));
 
+                //Restriccion d hora el mismo dia
                 if(fechaB.equals(getCurrentDay())) {
                     hInicio = getHora();
                 }else{
                     hInicio =HORAINICIOPERMANENTE;
                 }
                 //Cuando se cambia la fecha
+                //Restriccion de dias laborales
+                //Consulto el dia
                 String diaSem = getLetraDiaSemHoy(myCalendar);
                 consultaDiasLaboralesBarbero(telefono, fechaB.getText().toString(),diaSem);
             }
@@ -402,11 +409,12 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
+                        hideProgressDialog();
                         Log.e("Respondio", "respondio imagen");
                         response=redimensionarImagen(response,150,150);
                         imageViewLogomini = findViewById(R.id.imageViewPrincipalFotoB);
                         imageViewLogomini.setImageBitmap(redondearBitmap(response));
-                        hideProgressDialog();
+
                     }
                 }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
@@ -572,6 +580,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                 parametros.put("h_f_r", finalHf);
                 parametros.put("id_b_r", telefono);
                 parametros.put("id_c_r", tel_cliente);
+                parametros.put("id_barberia", nitDelBarbeto );
                 return parametros;
             }
         };
@@ -637,11 +646,11 @@ Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //Trae todas las reservas en esa fecha
+                //Trae todas las reservas en esa fechay de ese barbero
                 hideProgressDialog();
                 Log.e("Response ", response + response.equalsIgnoreCase("[]") +response.isEmpty());
                 if(response.equalsIgnoreCase("[]")){
-                    // SI NO DEVUELVE NADA
+                    // SI NO DEVUELVE NADA no hay reservas ese dia entonces dejo la tabla libre todo el dia
                     //Borro todas las filas de la tabla
                     int count = tbLayout.getChildCount();
                     if(count != 0) {
@@ -794,7 +803,6 @@ Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
             View tempView2 = tableRow.getChildAt(1); // Saco el textView 2 de los estados
             if (tempView instanceof TextView && tempView2 instanceof TextView) {
 
-                Log.e("Color del texto ", ((TextView) tempView2).getCurrentTextColor()+ "");
                 if (!((TextView) tempView2).getText().toString().equalsIgnoreCase("OCUPADO")) {
                     //Saco el texto de cada textview
                     String horaInicioCombo =((TextView) tempView).getText().toString();
@@ -940,11 +948,11 @@ Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
 
                         for(int i=0; i <dia.length;i++){
                             Log.e("Forrrr rr", dia[i]);
-                            Log.e("Dia comparacion blan", diaSemana+" "+ dia[i]);
                             if(diaSemana.equalsIgnoreCase(dia[i]) ){
                                 blanquear=true;
                             }
                         }
+
                         if(blanquear){
                             TableLayout tbLayout = findViewById(R.id.tbLayout);
                             tbLayout.removeAllViews(); //Reinicio la tabla

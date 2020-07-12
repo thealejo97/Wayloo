@@ -396,11 +396,24 @@ public class MainActivity extends AppCompatActivity  {
         getMenuInflater().inflate(R.menu.main, menu);
         TextView etTitu = findViewById(R.id.navTitulo);
         etTitu.setText(traerNombreSQLITE());
-        TextView etEmail = findViewById(R.id.navMail);
-        etEmail.setText(traerEmailSQLITE());
+        TextView etInferior = findViewById(R.id.etInferior);
+        String rol= traerROLSQLITE();
+        String textoInferior = "";
+        if(rol.equalsIgnoreCase("1")){
+            textoInferior = "Administrador";
+        }else {
+            if(rol.equalsIgnoreCase("2")){
+                textoInferior = "Barbero";
+                }
+            else{
+                if(rol.equalsIgnoreCase("3")){
+                    textoInferior = "Cliente";
+                }
+            };
+        }
+        etInferior.setText(textoInferior);
         cargarWebImagen(traerId_firebaseQLITE());
         imageViewLogomini = findViewById(R.id.imageViewLogoMININAV);
-
 
         imageViewLogomini.setOnClickListener(new View.OnClickListener() {
             @Override

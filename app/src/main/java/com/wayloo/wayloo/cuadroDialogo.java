@@ -38,7 +38,7 @@ public class cuadroDialogo {
     private ImageButton ibObtenerHora;
     private ImageButton ibObtenerHora_fin;
     private ImageButton fechaB;
-    EditText fecha;
+    TextView fecha;
     EditText etHora_inicio;
     EditText etHora_fin;
     private String hora_inicio;
@@ -62,7 +62,7 @@ public class cuadroDialogo {
 
         etHora_inicio= (EditText) dialog.findViewById(R.id.editTextHInicio_dialog);
         etHora_fin= (EditText) dialog.findViewById(R.id.editTextHInicioFin_dialog);
-        fecha = (EditText) dialog.findViewById(R.id.editTextFecha_dialog);
+        fecha = (TextView) dialog.findViewById(R.id.editTextFecha_dialog);
         fechaB = (ImageButton) dialog.findViewById(R.id.buttonFecha_dialgo);
 
         if(textViews.size()==0){
