@@ -103,7 +103,7 @@ public class NotificationService extends IntentService {
                     .setContentIntent(pendingIntent)
                     .setSmallIcon(R.drawable.ic_logo)
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText("Tiene registrada una reserva el dia de hoy a las "+ hora))
+                            .bigText("Tiene registrada una reserva el dia de hoy revise sus reservas para mas información"))
                     .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.ic_logor))
                     .setSound(soundUri)
 

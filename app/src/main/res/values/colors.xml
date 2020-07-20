@@ -6,6 +6,7 @@
     <color name="backGroudMain">#000000</color>
     <color name="whiteText">#FFFFFF</color>
     <color name="redButton">#EC2222</color>
+    <color name="GREEN">#00FF00</color>
     <color name="GRAY">#828282 </color>
     <color name="com_facebook_button_background_color_focused_disabled">#3b5998 </color>
     <color name="black_overlay">#66000000</color>

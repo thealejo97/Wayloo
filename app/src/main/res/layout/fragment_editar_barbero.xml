@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:background="@color/black_overlay">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:textSize="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/whiteText"
+        android:layout_gravity="center"
+        android:text="DIAS LABORALES" />
+    <View
+        android:layout_width="10dp"
+        android:layout_height="30dp"></View>
+    <TableLayout
+        android:id="@+id/table2"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/test_button_text23"
+        android:layout_marginLeft="45dp"
+        android:layout_marginBottom="25dp"
+        android:layout_marginRight="45dp"
+
+        android:stretchColumns="*"
+
+        >
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:background="@drawable/border">
+
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="   L   "
+                android:textColor="@color/whiteText"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="   M   "
+                android:textColor="@color/whiteText"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="left"
+                android:text="   MI   "
+                android:textColor="@color/whiteText"
+                android:textStyle="bold" />
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="  J  "
+                android:textColor="@color/whiteText"
+                android:textStyle="bold"/>
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="  V  "
+                android:textColor="@color/whiteText"
+
+                android:textStyle="bold"/>
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="  S  "
+                android:textColor="@color/whiteText"
+
+                android:textStyle="bold"/>
+            <TextView
+                android:textSize="15dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="   D   "
+                android:textColor="@color/whiteText"
+
+                android:textStyle="bold"/>
+        </TableRow>
+        <TableRow
+            android:background="@drawable/border">
+            <TextView
+                android:id="@+id/tvL"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvM"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/tvMi"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/tvJ"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/tvV"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/tvS"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/tvD"
+                android:textSize="20dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="■"
+                android:textColor="@color/redButton"
+                android:textStyle="bold"/>
+        </TableRow>
+    </TableLayout>
+        <View
+            android:layout_width="10dp"
+            android:layout_height="80dp"></View>
+        <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="El turno inicia: "
+            android:textColor="@color/whiteText"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+        <Spinner
+            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:id="@+id/horaI_spinner"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/array_horas"
+            android:backgroundTint="#FFFFFF"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#ffffff"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="El turno termina: "
+            android:textColor="@color/whiteText"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/horaF_spinner"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="#FFFFFF"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/array_horas"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#ffffff" />
+        <View
+            android:layout_width="10dp"
+            android:layout_height="120dp"/>
+        <Button
+            android:id="@+id/editarBarbero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/shapes"
+            android:text="    Editar Barbero    " />
+    <View
+        android:layout_width="10dp"
+        android:layout_height="12dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/redButton"
+            android:layout_gravity="center"
+            android:text="Desafiliarme"/>
+
+
+</LinearLayout>

@@ -95,7 +95,7 @@ public class fragment_editar_reserva extends Fragment {
         btnEliminarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eliminarReserva(fechaR,HI, traerTelSQLITE(), HF, idBR);
+                eliminarReserva(fechaR,HI, idBR, HF, idBR);
             }
         });
         return root;

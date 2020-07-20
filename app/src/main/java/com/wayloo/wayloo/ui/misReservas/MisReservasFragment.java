@@ -59,7 +59,6 @@ public class MisReservasFragment extends Fragment {
     TextView txtNoSeHanencontrado;
 
     RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
     private TextView consulFechatxt;
     final Calendar myCalendar = Calendar.getInstance();
 
@@ -201,6 +200,7 @@ public class MisReservasFragment extends Fragment {
                                         if(dtHOY.compareTo(dt) >= 0 || strHoye.equals(strRv)){
                                             if( strHoye.equals(strRv)){
                                                 Fragment miFragment = new fragment_editar_reserva();
+                                                Bundle datosAEnviar = new Bundle();
                                                 miFragment.setArguments(data);
                                                 getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
                                             }else {

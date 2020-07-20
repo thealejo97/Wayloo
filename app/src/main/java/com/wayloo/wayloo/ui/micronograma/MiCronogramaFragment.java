@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.adapters.ReservasCronogramaAdapters;
 import com.wayloo.wayloo.entidades.ReservasCronograma;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
+import com.wayloo.wayloo.ui.editarbarbero.EditarBarberoFragment;
 import com.wayloo.wayloo.ui.editarreservas.fragment_editar_reserva;
 
 import org.json.JSONArray;
@@ -65,6 +67,7 @@ public class MiCronogramaFragment extends Fragment {
     JsonObjectRequest jsonObjectRequest;
 
     private TextView consulFechatxt;
+    ImageView imgEditarBarbero;
     final Calendar myCalendar = Calendar.getInstance();
 
     
@@ -87,6 +90,15 @@ public class MiCronogramaFragment extends Fragment {
         request= Volley.newRequestQueue(getContext());
         consulFechatxt = root.findViewById(R.id.textViewSeleccionarFechaReservaCronograma);
         consulFechatxt.setText(getCurrentDay());
+        imgEditarBarbero = root.findViewById(R.id.imgeditarBarbero);
+
+        imgEditarBarbero.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment miFragment = new EditarBarberoFragment();
+                getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+            }
+        });
 
         showProgressDialog("Cargando reservas","Porfavor espere");
         consultarReservas(consulFechatxt.getText().toString());

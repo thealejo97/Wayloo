@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@color/black_overlay">
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="100dp"
@@ -13,16 +14,28 @@
         android:layout_gravity="center"
         app:srcCompat="@drawable/ic_trabajos"
         />
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_gravity="center">
     <TextView
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Mis Trabajos"
+        android:text="Mi Cronograma  "
         android:textSize="28sp"
         android:textStyle="bold|italic"
         android:textColor="@android:color/white"></TextView>
+    <ImageView
+        android:id="@+id/imgeditarBarbero"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:tint="@color/whiteText"
+        android:src="@drawable/ic_editar"></ImageView>
+</LinearLayout>
     <TextView
         android:id="@+id/tituloSeleccionarReservaCronograma"
         android:layout_width="match_parent"

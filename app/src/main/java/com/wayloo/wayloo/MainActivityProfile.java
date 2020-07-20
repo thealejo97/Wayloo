@@ -89,7 +89,6 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivityProfile extends AppCompatActivity implements cuadroDialogo.objDialog{
-    private static String OLD_PWTV = "";
     private RequestQueue request;
 
     private String tel_usuario;

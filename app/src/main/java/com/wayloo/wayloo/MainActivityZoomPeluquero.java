@@ -451,7 +451,8 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
     public void ResultadoDialogo(String fecha, String HI, String HF, String diasLaborales) {
         //Toast.makeText(MainActivityZoomPeluquero.this, "Hora seleccionada" +fecha+ "Ho "+HI+" a "+HF, Toast.LENGTH_SHORT).show();
         if(fecha != null && HI != null ){
-        RegistrarReserva(fecha,HI,HF);}else {
+        RegistrarReserva(fecha,HI,HF);
+        }else {
             Toast.makeText(MainActivityZoomPeluquero.this, "Error debe seleccionar los datos para completar el registro", Toast.LENGTH_SHORT).show();
         }
 
@@ -499,11 +500,8 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                     text.setTextColor(Color.BLACK);
                     text.setTextSize(16);
                     toast.show();
-
-                    //Toast.makeText(MainActivityZoomPeluquero.this, "Ya existe una reserva en este horario", Toast.LENGTH_SHORT).show();
                 }else{
                 try {
-
                     JSONObject jsonObject = null;
                     try {
                         jsonObject = new JSONObject(response.toString());
@@ -517,7 +515,6 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                      JSONObject jsonObject2 = null;
                      jsonObject2 = json.getJSONObject(0);
                      idReservaG[0] = jsonObject2.optString("id_reserva");
-
 
                     Log.e("JSON ARRAY RESPON",json.toString());
 
@@ -534,14 +531,8 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                         String tiempo =fecha + " "+ finalHi;
                         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yy hh:mm:ss");
                         Date parsedDate = dateFormat.parse(tiempo);
-                        Log.e("Tiempo ", tiempo);
                         Calendar fechaAlarma= Calendar.getInstance();
                         fechaAlarma.setTime(parsedDate);
-                        Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-                        Log.e("Date string ",fecha + " "+ finalHi + "    ts " + fechaAlarma.toString());
-                        Log.e("Dia del calendar", fechaAlarma.getTime().toString() + fechaAlarma.getTimeInMillis());
-                        Log.e("Id Devuelta", idReservaG[0]);
-
                         alarmador(Integer.parseInt(idReservaG[0]),(fechaAlarma.getTimeInMillis() - 1800000 ), finalHi);
                     } catch(Exception e) { //this generic but you can control another types of exception
                         // look the origin of excption
@@ -595,20 +586,14 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
 
         SharedPreferences.Editor edit = settings.edit();
         edit.putString("hour", hi);
-
         //SAVE ALARM TIME TO USE IT IN CASE OF REBOOT
         edit.putLong("alarmID", timestamp);
         edit.putLong("alarmTime", timestamp);
-
         edit.commit();
-Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
+
+        Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
         Utils.setAlarm(i, timestamp, MainActivityZoomPeluquero.this);
-/*
-        Intent alarmIntent = new Intent(ctx,AlarmReceiver.class);
-        PendingIntent pendingIntent;
-        pendingIntent = PendingIntent.getBroadcast(ctx, i, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-        alarmIntent.setData((Uri.parse("custom://"+ System.currentTimeMillis())));
-        alarmManager.set(AlarmManager.RTC_WAKEUP,timestamp,pendingIntent);*/
+
     }
 
     private String consultarClienteSQLITE() {
@@ -803,12 +788,12 @@ Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
             View tempView2 = tableRow.getChildAt(1); // Saco el textView 2 de los estados
             if (tempView instanceof TextView && tempView2 instanceof TextView) {
 
-                if (!((TextView) tempView2).getText().toString().equalsIgnoreCase("OCUPADO")) {
                     //Saco el texto de cada textview
                     String horaInicioCombo =((TextView) tempView).getText().toString();
                     Log.e("Comparacion dia",fechaB.getText().toString() + "   " +getCurrentDay()+"    "+
                             fechaB.getText().toString().equalsIgnoreCase(getCurrentDay()));
-                    //Si la fecha puesta en el selector de fecha es igual al a hoy debo verificar que el combo solo reciba horas posteriores a la actual
+                    //Si la fecha puesta en el selector de fecha es igual al a hoy debo verificar que el combo solo reciba horas\
+                    // posteriores a la actual
                     //ya que no se puede reservar en el pasado
                     if(fechaB.getText().toString().equalsIgnoreCase(getCurrentDay())){
                         Log.e("Hora valida",horaInicioCombo + "  ");
@@ -822,7 +807,7 @@ Log.e("     ALARMADOR " , i+ " "+timestamp+ " "+hi);
                         //las añado todas
                         textViews.add((TextView) tempView);
                     }
-                }
+
             }
         }
     }

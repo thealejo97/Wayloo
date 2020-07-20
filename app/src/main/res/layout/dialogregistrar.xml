@@ -32,39 +32,8 @@
             android:ems="10"
             android:inputType="date" />
 
-        <ImageButton
-            android:id="@+id/buttonFecha_dialgo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/calendaricon"
-            android:visibility="gone"></ImageButton>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/LinealBarberoInicio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:visibility="gone"
-        >
 
-        <EditText
-            android:id="@+id/editTextHInicio_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:ems="10" />
-
-        <ImageButton
-            android:id="@+id/ib_obtener_hora_inicio_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_access_time_white_24dp"
-            tools:ignore="ContentDescription"
-
-            />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/LinealBarberoInicio_dialog"
@@ -73,23 +42,6 @@
         android:orientation="horizontal"
         android:gravity="center"
         >
-
-        <EditText
-            android:id="@+id/editTextHInicioFin_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:ems="10"
-            android:visibility="gone"/>
-        <ImageButton
-            android:id="@+id/ib_obtener_hora_Fin_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_access_time_white_24dp"
-            tools:ignore="ContentDescription"
-            android:visibility="gone"
-            />
-
         <TextView
             android:id="@+id/textViewHorarioTitu"
             android:layout_width="wrap_content"
