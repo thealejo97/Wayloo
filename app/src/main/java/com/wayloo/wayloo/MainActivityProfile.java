@@ -10,6 +10,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -38,17 +39,21 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,6 +71,8 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.wayloo.wayloo.adapters.UsuariosAdapters;
+import com.wayloo.wayloo.entidades.Usuario;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.wayloo.wayloo.ui.Utilidades;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -74,6 +81,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.wayloo.wayloo.ui.anadirpeluqueria.AnadirPeluqueriaFragment;
+import com.wayloo.wayloo.ui.mispeluqueros.mispeluquerosfragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -82,6 +90,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,6 +111,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     ImageView imgPerfil;
     TextView texCambiar;
     CheckBox chModobarber;
+    ArrayList<String> nombresBarberias = new ArrayList<String>();
 
 
     //Firebase user
@@ -156,7 +166,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         ciudadTV = findViewById(R.id.CiudadPerfil);
         texCambiar = findViewById(R.id.textViewTituCambiar);
         btnCambiarClave = findViewById(R.id.textViewCambiarContra);
-        showProgressDialog("Cargando Información del perfil.", "Por favor espere");
+        //showProgressDialog("Cargando Información del perfil.", "Por favor espere");
 
         id_FirebaseCurrentUser = ConsultaCurrentUser();
 
@@ -174,21 +184,11 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             public void onClick(View v) {
                 String new_email = emailTV.getText().toString();
                 passwordPromp(new_email);
-
-                /*
-                String new_tel, new_nomb, new_apell, new_email, new_ciudad, new_rol;
-                new_tel = tel_u_TV.getText().toString();
-                new_nomb = nombTV.getText().toString();
-                new_apell = apllTV.getText().toString();
-                new_email = emailTV.getText().toString();
-                new_ciudad = ciudadTV.getText().toString();
-
-                updateBDRemota(new_tel, new_nomb, new_apell, " ", new_email, new_ciudad);*/
-
             }
         });
 
         if(rol_usuario.equals("1")){
+
             LinearLayout lnHabilitarModoBarbero = findViewById(R.id.linearHabilitarmodoBarbero);
             lnHabilitarModoBarbero.setVisibility(View.VISIBLE);
             View viewSeparador = findViewById(R.id.viewMODOB);
@@ -222,16 +222,12 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                             public void onClick(DialogInterface dialog, int i) {
                                 // "Yes" button was clicked
                                 if (switchChecked) {
-                                    administradorAntiguo(ConsultaCurrentUserTELSQLITE(), btn);
+                                    //No existe el administrador osea que toca crearlo
+                                    Fragment miFragment = new AnadirPeluqueriaFragment();
+                                    String tag = "anadirpeluqueria";
+                                    setContentView(R.layout.activity_main);
+                                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
 
-                                           /* //Cosa
-                                    if(administradorAntiguo(ConsultaCurrentUserTELSQLITE()) {
-                                        Fragment miFragment = new AnadirPeluqueriaFragment();
-                                        String tag = "anadirpeluqueria";
-                                        setContentView(R.layout.activity_main);
-                                        getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
-                                        btn.setChecked(true);
-                                    }*/
                                 } else {
                                     deshabilitarAdmin();
                                     btn.setChecked(false);
@@ -271,6 +267,9 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             }
         });
 
+        consultarListaBarberiasPorAdministrador(ConsultaCurrentUserTELSQLITE());
+
+        ////
         btnCambiarClave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,6 +292,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                                                         @Override
                                                         public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                                                             if(isChecked){
+                                                                Log.e("No he ","podod");
                                                                 completarSeleccionHoraBarbero();
                                                                 //   showProgressDialog("Habilitando Modo Barbero", "Espere ... ");
                                                                 //    actualizarRemotoBarASAAdmin("4");
@@ -313,100 +313,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     }
 
-    private void administradorAntiguo(String telConsulta, Switch btn) {
-
-        //Verifico el usuario existe 000Webhost si no existe, pido que complete los datos
-        showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
-        request = Volley.newRequestQueue(getApplicationContext());
-
-        String ip =getString(R.string.ip_way);
-        String url = ip + "/consultas/verificarEstadoDelAdministrador.php?";
-        Log.e("URL DEL POST", url);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                hideProgressDialog();
-                Log.e("Response ", response);
-
-                if (response.equalsIgnoreCase("deshabilitado")) {
-                    //No existe el administrador osea que toca crearlo
-                    Fragment miFragment = new AnadirPeluqueriaFragment();
-                    String tag = "anadirpeluqueria";
-                    setContentView(R.layout.activity_main);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.content_main, miFragment, tag).commit();
-
-                } else {
-                    //Esta deshabilitado
-                    habilitarAdministradorAntiguo(telConsulta);
-
-                }
-            }
-
-
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivityProfile.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
-                Log.e("Error Response ", error.toString());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> parameters = new HashMap<String, String>();
-                parameters.put("telefono", telConsulta);
-                return parameters;
-            }
-
-        };
-        request.add(stringRequest);
-
-    }
-
-    private void habilitarAdministradorAntiguo(String telConsulta) {
-
-        //Verifico el usuario existe 000Webhost si no existe, pido que complete los datos
-        showProgressDialog("Verificando usuario","Conectando con el servidor espere.");
-        request = Volley.newRequestQueue(getApplicationContext());
-
-        String ip =getString(R.string.ip_way);
-        String url = ip + "/consultas/rehabilitarAdministrador.php?";
-        Log.e("URL DEL POST", url);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                hideProgressDialog();
-                Log.e("Response ", response);
-                Switch bttn = findViewById(R.id.toggleAdministrar);
-                bttn.setChecked(true);
-                updateROLSQLITE("1");
-                Toast.makeText(MainActivityProfile.this, "Funciones de administrador habilitadas.", Toast.LENGTH_SHORT).show();
-                reiniciarApp();
-            }
-
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivityProfile.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
-                Log.e("Error Response ", error.toString());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> parameters = new HashMap<String, String>();
-                parameters.put("telefono", telConsulta);
-                return parameters;
-            }
-
-        };
-        request.add(stringRequest);
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -415,7 +321,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     private void deshabilitarAdmin() {
 
-        String new_rol = "3";
+            String new_rol = "3";
 
             request = Volley.newRequestQueue(getApplicationContext());
 
@@ -451,8 +357,6 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> parameters = new HashMap<String, String>();
                     parameters.put("id_usuario", tel_usuario);
-
-
                     return parameters;
                 }
 
@@ -463,8 +367,40 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     private void completarSeleccionHoraBarbero() {
 
-        Context con = MainActivityProfile.this;
-        new cuadroDialogModoBarber(con, MainActivityProfile.this);
+        if(nombresBarberias.equals(null)){}else {
+            Context con = MainActivityProfile.this;
+
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivityProfile.this);
+            View mView = getLayoutInflater().inflate(R.layout.dialogmodobarbero,null);
+            //mView.setBackgroundColor(Color.parseColor("#000000"));
+            mBuilder.setTitle("Seleccione la barberia a la cual se va a vincular");
+            Spinner mSpinner = (Spinner) mView.findViewById(R.id.spBarberiasDelAdmin);
+            ArrayAdapter adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, nombresBarberias);
+            mSpinner.setAdapter(adapter);
+            mBuilder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(mSpinner.getSelectedItem().toString().equalsIgnoreCase(""))
+                    {
+                        Toast.makeText(con, "Esteee", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            mBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Toast.makeText(con, "Cancelado", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mBuilder.setView(mView);
+            AlertDialog dialog = mBuilder.create();
+            dialog.show();
+
+
+        //    ArrayAdapter adapter = new ArrayAdapter(this,R.layout.color_spinner_layout, nombresBarberias) ;
+            //new cuadroDialogModoBarber(con, nombresBarberias, MainActivityProfile.this);
+        }
     }
 
     private void actualizarRemotoBarASAAdmin(final String new_rol, final String nit, final String HI, final String HF, final String diasLaborales) {
@@ -1421,6 +1357,80 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         // show it
         alertDialog.show();
     }
+
+
+    private void consultarListaBarberiasPorAdministrador(String telAdmin){
+
+        progress=new ProgressDialog(MainActivityProfile.this);
+        progress.setMessage("Consultando Peluquerias");
+        progress.show();
+
+        request = Volley.newRequestQueue(MainActivityProfile.this);
+
+        String ip =getString(R.string.ip_way);
+
+        String url = ip + "/consultas/consultarListaBarberiasXAdministrador.php?";
+
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                hideProgressDialog();
+
+                try {
+                    JSONObject jsonObjectResponse = new JSONObject(response.toString());
+
+
+                    Usuario usuario=null;
+                    Log.e("URL RESPO", response.toString());
+
+                    JSONArray json=jsonObjectResponse.optJSONArray("peluquerias");
+
+                    int cantidadUsuarios =json.length();
+
+                    for (int i=0;i < cantidadUsuarios;i++){
+                        JSONObject jsonObject=null;
+                        jsonObject=json.getJSONObject(i);
+                        nombresBarberias.add(jsonObject.optString("nombre_peluqueria"));
+
+                        Log.e("Error", json.getJSONObject(i) +"");
+                    }
+                    progress.hide();
+
+
+
+
+                } catch (JSONException e) {
+                    Log.e("Error json", e.getMessage());
+                    Log.e("Error", response);
+                    Toast.makeText(MainActivityProfile.this, "No se ha podido establecer conexión con el servidor" +
+                            " "+response, Toast.LENGTH_LONG).show();
+                    progress.hide();
+                }
+
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response Update ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("idA", telAdmin);
+
+                return parameters;
+            }
+
+        };
+        request.add(stringRequest);
+
+    }
+
 }
 
 

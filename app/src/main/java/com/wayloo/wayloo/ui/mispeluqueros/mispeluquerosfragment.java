@@ -87,7 +87,19 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
 
         cargarWebServices();
 
+        TextView txt = vista.findViewById(R.id.misPeluTxt);
+        txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle data = new Bundle();
 
+                data.putString("NIT",NIT);
+                Fragment miFragment = new anadirpeluqueroapeluqueria();
+                miFragment.setArguments(data);
+                getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).commit();
+                // Fragment que va a remplazar
+            }
+        });
         ImageView btnAn = vista.findViewById(R.id.anadirPeluqueroaPeluqueriaBTN);
         btnAn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,7 +200,6 @@ public class mispeluquerosfragment extends Fragment implements com.android.volle
             recyclerPeluquero.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
                 @Override
                 public void onRequestDisallowInterceptTouchEvent(boolean b) {
-
                 }
 
                 @Override

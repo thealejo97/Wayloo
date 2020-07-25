@@ -1,8 +1,11 @@
 package com.wayloo.wayloo.ui.editarbarbero;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -32,6 +35,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.JsonObject;
 import com.wayloo.wayloo.MainActivity;
+import com.wayloo.wayloo.MainActivityProfile;
 import com.wayloo.wayloo.MainActivityZoomPeluquero;
 import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
@@ -53,12 +57,7 @@ public class EditarBarberoFragment extends Fragment {
     Spinner snHoraInicio;
     Spinner snHoraFin;
     Button btnActualizar;
-    TextView tvL,tvM,tvMi,tvJ,tvV,tvS,tvD;
-
-
-    public EditarBarberoFragment() {
-        // Required empty public constructor
-    }
+    TextView tvL,tvM,tvMi,tvJ,tvV,tvS,tvD, desvinvularBR;
 
     public void pintar_dia(TextView txCambio){
         txCambio.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +122,7 @@ public class EditarBarberoFragment extends Fragment {
         tvV = root.findViewById(R.id.tvV);
         tvS = root.findViewById(R.id.tvS);
         tvD = root.findViewById(R.id.tvD);
+        desvinvularBR = root.findViewById(R.id.desvincularBarbero);
 
         pintar_dia(tvL);
         pintar_dia(tvM);
@@ -153,11 +153,14 @@ public class EditarBarberoFragment extends Fragment {
         btnActualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String horaI = snHoraInicio.getSelectedItem().toString();
-                String horaF = snHoraFin.getSelectedItem().toString();
-                String dias_no = obtenerDiasNoLaborales();
-                Log.e("DIASNO ", dias_no+" "+horaI+" "+horaF);
-                consultarReservasAfectadas(horaI,horaF,dias_no);
+
+                consultarReservasAfectadas();
+            }
+        });
+        desvinvularBR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                consultarReservasAfectadasELIMINACION();
             }
         });
 
@@ -191,7 +194,107 @@ public class EditarBarberoFragment extends Fragment {
         return diasN;
     }
 
-    private void consultarReservasAfectadas(String horaI, String horaF, String dias_no) {
+    private void consultarReservasAfectadasELIMINACION() {
+
+        String horaI = snHoraInicio.getSelectedItem().toString();
+        String horaF = snHoraFin.getSelectedItem().toString();
+        String dias_no = obtenerDiasNoLaborales();
+        Log.e("DIASNO ", dias_no+" "+horaI+" "+horaF);
+
+        request = Volley.newRequestQueue(getContext());
+
+        String ip =getString(R.string.ip_way);
+
+        String url = ip + "/consultas/consultarReservasAfectadas.php?";
+
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e("response", response);
+
+                if (response.equalsIgnoreCase("ok")) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Va a realizar cambios de horario");
+                    builder.setMessage("Atención,Esta a punto de realizar un cambio en su perfil publico de barbero ¿Desea continuar?");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ejecutarELIMINAR();
+                        }
+                    });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.show();
+
+                } else {
+                    if (response.equalsIgnoreCase("reservaProxima")) {
+                        Toast.makeText(getContext(), "Error, tiene una reserva en la siguiente hora, debe finalizar el turno y reintentar.",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        try {
+                            int numRes = Integer.parseInt(response);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("Cambio de horario detectado");
+                            builder.setMessage("Atención, aun tiene reservas sin cumplir, al eliminar el perfil se cancelaran " + numRes + " reservas ¿Desea continuar?");
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ejecutarELIMINAR();
+                                }
+                            });
+
+                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            builder.show();
+
+                        }catch (NumberFormatException  e){
+                            Log.e("Error ", e.toString());
+                            Toast.makeText(getContext(), "Error "+ response, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response Update ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("telBarbero", traerTelSQLITE());
+                parameters.put("key", "barbero");
+
+                return parameters;
+            }
+        };
+        request.add(stringRequest);
+
+    }
+
+    private void consultarReservasAfectadas() {
+        String horaI = snHoraInicio.getSelectedItem().toString();
+        String horaF = snHoraFin.getSelectedItem().toString();
+        String dias_no = obtenerDiasNoLaborales();
+
+        Log.e("DIASNO ", dias_no+" "+horaI+" "+horaF);
 
         request = Volley.newRequestQueue(getContext());
 
@@ -276,6 +379,7 @@ public class EditarBarberoFragment extends Fragment {
                 parameters.put("HI", horaI);
                 parameters.put("HF", horaF);
                 parameters.put("DIASN", dias_no);
+                parameters.put("key", "barbero");
 
                 return parameters;
             }
@@ -284,6 +388,47 @@ public class EditarBarberoFragment extends Fragment {
 
     }
 
+    private void ejecutarELIMINAR(){
+
+        request = Volley.newRequestQueue(getContext());
+
+        String ip =getString(R.string.ip_way);
+
+        String url = ip + "/consultas/DeleteBarbero.php?";
+
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e("Response Update go ", response);
+                if(response.equalsIgnoreCase("ok")) {
+                    Toast.makeText(getContext(), "Actualizado", Toast.LENGTH_SHORT).show();
+                    reiniciarApp();
+                }else{
+                    Toast.makeText(getContext(), "Error Actualizando", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response Update ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("telBarbero", traerTelSQLITE());
+
+                return parameters;
+            }
+
+        };
+        request.add(stringRequest);
+
+    }
 
     private void ejecutarUpdate(String horaI, String horaF, String dias_no) {
 
@@ -428,4 +573,12 @@ Log.e(" Cositas", snHoraInicio.getAdapter().getCount()+ " "+ jsonObject2.optStri
         return name;
     }
 
+    private void reiniciarApp() {
+        Intent mStartActivity = new Intent(getContext(), MainActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
+    }
 }

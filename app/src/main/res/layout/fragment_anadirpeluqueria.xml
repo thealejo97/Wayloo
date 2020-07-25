@@ -21,13 +21,13 @@
             android:layout_width="150dp"
             android:layout_gravity="center"
             android:layout_height="150dp"
-            tools:srcCompat="@drawable/ic_logo" />
+            tools:srcCompat="@drawable/ic_logor" />
         <EditText
             android:id="@+id/etxt_PeluqueriaNitAnadir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
-            android:hint="Escriba el NIT de su peluqueria."
+            android:hint="NIT"
             android:inputType="number"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff" />
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
-            android:hint="Escriba el nombre de su peluqueria."
+            android:hint="Nombre"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff" />
 
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
-            android:hint="Escriba la direccion de la peluqueria"
+            android:hint="Direccion"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff" />
 
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
-            android:hint="Escriba el telefono de su peluqueria."
+            android:hint="Telefono"
             android:inputType="number"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff" />

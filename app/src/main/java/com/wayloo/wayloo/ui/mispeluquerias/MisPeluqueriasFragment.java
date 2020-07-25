@@ -19,11 +19,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.wayloo.wayloo.MainLogginActivity;
 import com.wayloo.wayloo.R;
@@ -39,8 +41,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MisPeluqueriasFragment extends Fragment implements com.android.volley.Response.Listener<JSONObject>, Response.ErrorListener  {
+public class MisPeluqueriasFragment extends Fragment {
 
     RecyclerView recyclerMisPeluquerias;
     ArrayList<Usuario> listaPeluquerias;
@@ -64,7 +68,8 @@ public class MisPeluqueriasFragment extends Fragment implements com.android.voll
         recyclerMisPeluquerias.setHasFixedSize(true);
         request= Volley.newRequestQueue(getContext());
 
-        cargarWebServices();
+      //  cargarWebServices();
+        consultarListaBarberiasPorAdministrador(traerTELSQLITE());
         btnAnadirPeluqueria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,17 +87,6 @@ public class MisPeluqueriasFragment extends Fragment implements com.android.voll
     }
 
 
-    private void cargarWebServices() {
-        progress=new ProgressDialog(getContext());
-        progress.setMessage("Consultando Peluquerias");
-        progress.show();
-        String ip =getString(R.string.ip_way);
-        String url = ip+"/consultas/consultarListaUsuariosAdm.php?idA="+traerTELSQLITE();
-        Log.e("req url",url);
-        jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        request.add(jsonObjectRequest);
-    }
-
     private String traerTELSQLITE(){
         UsuariosSQLiteHelper usdbh =
                 new UsuariosSQLiteHelper(mContext, "dbUsuarios", null, 1);
@@ -109,100 +103,138 @@ public class MisPeluqueriasFragment extends Fragment implements com.android.voll
         return name;
     }
 
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        Log.e("Error peluquerias",error.toString());
-        progress.hide();
-    }
-
-    @Override
-    public void onResponse(JSONObject response) {
-        Usuario usuario=null;
-        Log.e("URL RESPO", response.toString());
-
-        JSONArray json=response.optJSONArray("peluquerias");
-
-        int cantidadUsuarios =json.length();
-        try {
-
-            for (int i=0;i < cantidadUsuarios;i++){
-                usuario=new Usuario();
-                JSONObject jsonObject=null;
-                jsonObject=json.getJSONObject(i);
-                usuario.setNit(jsonObject.optString("nit_peluqueria"));
-                usuario.setTelefono(jsonObject.optString("telefono_peluqueria"));
-                usuario.setNombre(jsonObject.optString("nombre_peluqueria"));
-                usuario.setDireccion(jsonObject.optString("direccion_peluqueria"));
-                usuario.setCiudad(jsonObject.optString("ciudad_peluqueria"));
-                usuario.setCalificacion(jsonObject.optString("calificacion_peluqueria"));
-                listaPeluquerias.add(usuario);
-                Log.e("Error", json.getJSONObject(i) +"");
-            }
-            progress.hide();
-
-
-            UsuariosAdapters adapter=new UsuariosAdapters(listaPeluquerias, getContext());
-            recyclerMisPeluquerias.setAdapter(adapter);
-
-
-            /////////////////////////////////
-            final GestureDetector mGestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
-                @Override public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-            });
-
-            recyclerMisPeluquerias.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-                @Override
-                public void onRequestDisallowInterceptTouchEvent(boolean b) {
-
-                }
-
-                @Override
-                public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-                    try {
-                        View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-
-                        if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
 
 
 
-                            int position = recyclerView.getChildAdapterPosition(child);
+    private void consultarListaBarberiasPorAdministrador(String telAdmin){
+        progress=new ProgressDialog(getContext());
+        progress.setMessage("Consultando Peluquerias");
+        progress.show();
 
-                            Bundle data = new Bundle();
-                            data.putString("NIT",listaPeluquerias.get(position).getNIT());
-                            data.putString("telefono",listaPeluquerias.get(position).getTelefono());
-                            data.putString("nombre",listaPeluquerias.get(position).getNombre());
-                            data.putString("calificacion",listaPeluquerias.get(position).getCalificacion());
-                            data.putString("ciudad",listaPeluquerias.get(position).getCiudad());
-                            data.putString("direccion",listaPeluquerias.get(position).getDireccion());
-                            //Editando aquiii
-                            Fragment miFragment = null;
-                            miFragment = new mispeluquerosfragment();
-                            miFragment.setArguments(data);
-                            getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).addToBackStack(null).commit();
+        request = Volley.newRequestQueue(getContext());
 
+        String ip =getString(R.string.ip_way);
+
+        String url = ip + "/consultas/consultarListaBarberiasXAdministrador.php?";
+
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject jsonObjectResponse = new JSONObject(response.toString());
+
+
+                Usuario usuario=null;
+                Log.e("URL RESPO", response.toString());
+
+                JSONArray json=jsonObjectResponse.optJSONArray("peluquerias");
+
+                int cantidadUsuarios =json.length();
+
+                    for (int i=0;i < cantidadUsuarios;i++){
+                        usuario=new Usuario();
+                        JSONObject jsonObject=null;
+                        jsonObject=json.getJSONObject(i);
+                        usuario.setNit(jsonObject.optString("nit_peluqueria"));
+                        usuario.setTelefono(jsonObject.optString("telefono_peluqueria"));
+                        usuario.setNombre(jsonObject.optString("nombre_peluqueria"));
+                        usuario.setDireccion(jsonObject.optString("direccion_peluqueria"));
+                        usuario.setCiudad(jsonObject.optString("ciudad_peluqueria"));
+                        usuario.setCalificacion(jsonObject.optString("calificacion_peluqueria"));
+                        listaPeluquerias.add(usuario);
+                        Log.e("Error", json.getJSONObject(i) +"");
+                    }
+                    progress.hide();
+
+
+                    UsuariosAdapters adapter=new UsuariosAdapters(listaPeluquerias, getContext());
+                    recyclerMisPeluquerias.setAdapter(adapter);
+
+
+                    /////////////////////////////////
+                    final GestureDetector mGestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+                        @Override public boolean onSingleTapUp(MotionEvent e) {
                             return true;
                         }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+                    });
 
-                    return false;
+                    recyclerMisPeluquerias.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                        @Override
+                        public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+                        }
+
+                        @Override
+                        public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+                            try {
+                                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+
+                                if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
+
+
+
+                                    int position = recyclerView.getChildAdapterPosition(child);
+
+                                    Bundle data = new Bundle();
+                                    data.putString("NIT",listaPeluquerias.get(position).getNIT());
+                                    data.putString("telefono",listaPeluquerias.get(position).getTelefono());
+                                    data.putString("nombre",listaPeluquerias.get(position).getNombre());
+                                    data.putString("calificacion",listaPeluquerias.get(position).getCalificacion());
+                                    data.putString("ciudad",listaPeluquerias.get(position).getCiudad());
+                                    data.putString("direccion",listaPeluquerias.get(position).getDireccion());
+                                    //Editando aquiii
+                                    Fragment miFragment = null;
+                                    miFragment = new mispeluquerosfragment();
+                                    miFragment.setArguments(data);
+                                    getFragmentManager().beginTransaction().replace(R.id.content_main, miFragment).addToBackStack(null).commit();
+
+                                    return true;
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            return false;
+                        }
+
+                        @Override
+                        public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+                        }      });
+
+                } catch (JSONException e) {
+                    Log.e("Error json", e.getMessage());
+                    Log.e("Error", response);
+                    Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" +
+                            " "+response, Toast.LENGTH_LONG).show();
+                    progress.hide();
                 }
 
-                @Override
-                public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+            }
 
-                }      });
+        }, new Response.ErrorListener() {
 
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response Update ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("idA", telAdmin);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" +
-                    " "+response, Toast.LENGTH_LONG).show();
-            progress.hide();
-        }}
+                return parameters;
+            }
+
+        };
+        request.add(stringRequest);
+
+    }
+
 
     @Override
     public void onAttach(Context context) {

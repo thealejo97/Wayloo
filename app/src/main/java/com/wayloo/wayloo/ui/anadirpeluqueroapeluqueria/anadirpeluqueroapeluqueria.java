@@ -137,6 +137,7 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
     @Override
     public void onResponse(JSONObject response) {//1er onresponse lista de todos barberos 1,2,3,4
         cliente usuario=null;
+        Log.e("response",response.toString());
 
         JSONArray json=response.optJSONArray("usuarios");
 

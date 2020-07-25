@@ -61,9 +61,7 @@ public class cuadroDialogo {
             TextView textohorar = dialog.findViewById(R.id.textViewHorarioTitu);
 
             textotitu.setText("El barbero no tiene turnos disponibles en este momento");
-            etHora_inicio.setVisibility(View.GONE);
-            fecha.setVisibility(View.GONE);
-            textohorar.setVisibility(View.GONE);
+
             vacio = true;
         }else{vacio=false;}
 

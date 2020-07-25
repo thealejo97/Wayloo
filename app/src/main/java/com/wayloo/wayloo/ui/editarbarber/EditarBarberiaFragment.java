@@ -95,7 +95,7 @@ Button btnEditar;
             @Override
             public void onClick(View v) {
 
-                eliminarBarberiaBDRemota(NitB);
+                consultarReservasAfectadasELIMINACION(NitB);
             }
         });
 
@@ -189,6 +189,98 @@ Button btnEditar;
     }
 
 
+    private void consultarReservasAfectadasELIMINACION(String NitBEliminar) {
+
+        request = Volley.newRequestQueue(getContext());
+
+        String ip =getString(R.string.ip_way);
+
+        String url = ip + "/consultas/consultarReservasAfectadas.php?";
+
+        Log.e("URL DEL POST", url);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e("response", response);
+                Log.e("response del server", response);
+
+                if (response.equalsIgnoreCase("ok")) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Va a realizar cambios de horario");
+                    builder.setMessage("Atención,Esta a punto de elminar esta bareria ¿Desea continuar?");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            eliminarBarberiaBDRemota(NitBEliminar);
+                        }
+                    });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.show();
+
+                } else {
+                    if (response.equalsIgnoreCase("reservaProxima")) {
+                        Toast.makeText(getContext(), "Error, tiene una reserva en la siguiente hora, debe finalizar el turno y reintentar.",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        try {
+                            int numRes = Integer.parseInt(response);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("Cambio de horario detectado");
+                            builder.setMessage("Atención, aun tiene reservas sin cumplir, al eliminar esta barberia se cancelaran " + numRes + " reservas ¿Desea continuar?");
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    eliminarBarberiaBDRemota(NitBEliminar);
+                                }
+                            });
+
+                            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            builder.show();
+
+                        }catch (NumberFormatException  e){
+                            Log.e("Error ", e.toString());
+                            Toast.makeText(getContext(), "Error "+ response, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Response Update ", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("key", "barberia");
+                parameters.put("nit", NitBEliminar);
+
+                return parameters;
+            }
+        };
+        request.add(stringRequest);
+
+    }
+
+
     private void eliminarBarberiaBDRemota(final String NitBEliminar) {
 
 
@@ -258,6 +350,8 @@ Button btnEditar;
         }
 
     }
+
+
     private void showProgressDialog(String titulo,String mensaje){
         progress = ProgressDialog.show(getContext(), titulo,
                 mensaje, true);
