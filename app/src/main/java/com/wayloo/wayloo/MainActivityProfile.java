@@ -81,6 +81,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.wayloo.wayloo.ui.anadirpeluqueria.AnadirPeluqueriaFragment;
+import com.wayloo.wayloo.ui.engine.engine;
 import com.wayloo.wayloo.ui.mispeluqueros.mispeluquerosfragment;
 
 import org.json.JSONArray;
@@ -112,6 +113,8 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
     TextView texCambiar;
     CheckBox chModobarber;
     ArrayList<String> nombresBarberias = new ArrayList<String>();
+    ArrayList<String> nitsBarberias = new ArrayList<String>();
+
 
 
     //Firebase user
@@ -338,7 +341,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                     if (response.equalsIgnoreCase("Registra")) {
                         Toast.makeText(MainActivityProfile.this, "Modo administrador desactivado", Toast.LENGTH_SHORT).show();
                         updateROLSQLITE(new_rol);
-                        reiniciarApp();
+                        new engine().reiniciarApp(getApplicationContext());
                     } else {
                         Toast.makeText(MainActivityProfile.this, "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
                     }
@@ -380,9 +383,10 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             mBuilder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(mSpinner.getSelectedItem().toString().equalsIgnoreCase(""))
+
+                    if(!mSpinner.getSelectedItem().toString().equalsIgnoreCase(""))
                     {
-                        Toast.makeText(con, "Esteee", Toast.LENGTH_SHORT).show();
+                        actualizarRemotoBarASAAdmin(tel_usuario,nitsBarberias.get(mSpinner.getSelectedItemPosition()));
                     }
                 }
             });
@@ -397,23 +401,17 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             AlertDialog dialog = mBuilder.create();
             dialog.show();
 
-
-        //    ArrayAdapter adapter = new ArrayAdapter(this,R.layout.color_spinner_layout, nombresBarberias) ;
-            //new cuadroDialogModoBarber(con, nombresBarberias, MainActivityProfile.this);
         }
     }
 
-    private void actualizarRemotoBarASAAdmin(final String new_rol, final String nit, final String HI, final String HF, final String diasLaborales) {
 
+    private void actualizarRemotoBarASAAdmin(final String tel, final String nitAnadir) {
 
-        if (new_rol.equalsIgnoreCase("")) {
-            Toast.makeText(this, "ERROR LOS CAMPOS NO PUEDEN ESTAR VACIOS", Toast.LENGTH_LONG).show();
-        } else {
             request = Volley.newRequestQueue(getApplicationContext());
 
             String ip =getString(R.string.ip_way);
 
-            String url = ip + "/consultas/UpdateBarAsAdmin.php?";
+            String url = ip + "/consultas/updateClAsBar.php?";
 
             Log.e("URL DEL POST", url);
 
@@ -421,9 +419,9 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                 @Override
                 public void onResponse(String response) {
                     Log.e("Response Update go ", response);
-                    if(response.equalsIgnoreCase("RegistraregistraUsuario")){
+                    if(response.equalsIgnoreCase("registrado")){
                     Toast.makeText(MainActivityProfile.this, "Modo barbero activado", Toast.LENGTH_SHORT).show();
-                    updateROLSQLITE(new_rol);
+                    updateROLSQLITE("4");
                     reiniciarApp();}
                     else{
                         Toast.makeText(MainActivityProfile.this, "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
@@ -442,22 +440,13 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put("rp", new_rol);
-                    parameters.put("id_firebase", id_FirebaseCurrentUser);
-                    parameters.put("nit_peluqueria_pertenese",nit);
-                    parameters.put("h_inicio", HI);
-                    parameters.put("h_fin", HF);
-                    parameters.put("diasLaborales",diasLaborales);
-                    parameters.put("tp", tel_usuario);
-
+                    parameters.put("telefono", tel);
+                    parameters.put("NIT", nitAnadir);
                     return parameters;
                 }
 
             };
             request.add(stringRequest);
-
-
-        }
 
 
     }
@@ -972,7 +961,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
         handler.postDelayed(new Runnable() {
             public void run() {
                 progress.dismiss();
-                reiniciarApp();
+                new engine().reiniciarApp(getApplicationContext());
 
             }
 
@@ -980,14 +969,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
 
     }
 
-    private void reiniciarApp() {
-        Intent mStartActivity = new Intent(MainActivityProfile.this, MainActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivityProfile.this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) MainActivityProfile.this.getSystemService(MainActivityProfile.this.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-        System.exit(0);
-    }
+
 
     private String convertirImgString(Bitmap bitmap) {
 
@@ -1285,7 +1267,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
             finish();
         }else {
             showProgressDialog("Habilitando Modo Barbero", "Espere ... ");
-            actualizarRemotoBarASAAdmin("4", nit, HI, HF, diasLaborales);
+//            actualizarRemotoBarASAAdmin("4", nit, HI, HF, diasLaborales);
         }
     }
 
@@ -1393,6 +1375,7 @@ public class MainActivityProfile extends AppCompatActivity implements cuadroDial
                         JSONObject jsonObject=null;
                         jsonObject=json.getJSONObject(i);
                         nombresBarberias.add(jsonObject.optString("nombre_peluqueria"));
+                        nitsBarberias.add(jsonObject.optString("nit_peluqueria"));
 
                         Log.e("Error", json.getJSONObject(i) +"");
                     }

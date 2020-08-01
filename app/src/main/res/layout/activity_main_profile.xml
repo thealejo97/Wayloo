@@ -126,12 +126,15 @@
                     android:text="@string/Ciudad"
                     android:textStyle="bold"
                     android:textColor="@color/whiteText" />
-            <EditText
+
+            <Spinner
+                android:textAlignment="center"
                 android:id="@+id/CiudadPerfil"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Ciudad"
-                android:textColor="@color/whiteText"></EditText>
+                android:backgroundTint="#FFFFFF"
+                android:textColor="#000000"
+                android:textColorHint="#ffffff"/>
         </LinearLayout>
 
 

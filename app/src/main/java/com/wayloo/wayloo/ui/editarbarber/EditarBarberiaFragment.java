@@ -287,7 +287,6 @@ Button btnEditar;
         if (NitBEliminar.equalsIgnoreCase("")) {
             Toast.makeText(getContext(), "ERROR ELIMINANDO, VERIFIQUE EL CAMPO NIT", Toast.LENGTH_LONG).show();
         } else {
-            final Utilidades utl = new Utilidades();
             //Si no son iguales
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Confirmación eliminación del Barberia!");
@@ -329,11 +328,12 @@ Button btnEditar;
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> parameters = new HashMap<String, String>();
-                            parameters.put("faeliminar", NitBEliminar);
+                            parameters.put("nitEliminar", NitBEliminar);
                             return parameters;
                         }
 
                     };
+                    Log.e("nitEliminar", NitBEliminar);
                     request.add(stringRequest);
                 }
             });
