@@ -42,6 +42,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
+import com.wayloo.wayloo.ui.engine.engine;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,8 +89,6 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
     final Calendar myCalendar = Calendar.getInstance();
     TextView fechaB;
     RatingBar rBar = null;
-    //Progress
-    ProgressDialog progress;
     ArrayList<TextView> textViews = new ArrayList<>();
 
 
@@ -393,7 +392,8 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
     }
 
     public void cargarWebImagen(final String id){
-        showProgressDialog("Cargando ..","Por favor espere....");
+        engine myEngine = new engine();
+        myEngine.showProgressDialog("Cargando ..","Por favor espere....", MainActivityZoomPeluquero.this);
         String ip =getString(R.string.ip_way);
         String url =ip+"/consultas/imagenes/"+id+".jpg";
         url=url.replace(" ","%20");
@@ -409,7 +409,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
-                        hideProgressDialog();
+                        myEngine.hideProgressDialog();
                         Log.e("Respondio", "respondio imagen");
                         response=redimensionarImagen(response,150,150);
                         imageViewLogomini = findViewById(R.id.imageViewPrincipalFotoB);
@@ -419,7 +419,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
                 }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                hideProgressDialog();
+                myEngine.hideProgressDialog();
                 Toast.makeText(MainActivityZoomPeluquero.this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
             }
         });
@@ -461,7 +461,8 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
 
 
     private void RegistrarReserva(final String fecha, String hi, String hf) {
-        showProgressDialog("Registrando reserva","Espere mientras se contacta con el servidor");
+        engine myEngine = new engine();
+        myEngine.showProgressDialog("Registrando reserva","Espere mientras se contacta con el servidor", MainActivityZoomPeluquero.this);
         String partes[] = hi.split(" - ");
         hi= partes[0];
         hf= partes[1];
@@ -485,7 +486,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
 
             @Override
             public void onResponse(String response) {
-                hideProgressDialog();
+                myEngine.hideProgressDialog();
                 Log.e("RESPUESTA  regis5tro: ", "" + response);
                 if(response.trim().equalsIgnoreCase("TimeReserverd")) {
                     Toast toast = Toast.makeText(MainActivityZoomPeluquero.this, "Ya existe una reserva en este horario", Toast.LENGTH_LONG);
@@ -553,7 +554,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                hideProgressDialog();
+                myEngine.hideProgressDialog();
                 Log.e("RESPUESTA: ", "" + error);
                 Toast.makeText(MainActivityZoomPeluquero.this, "No se ha podido conectar", Toast.LENGTH_SHORT).show();
 
@@ -617,7 +618,8 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
 
     private void ConsultaReservas(final String fechaConsulta){
 
-        showProgressDialog("Consultando", "Consultando fecha "+ fechaConsulta);
+        engine myEngine = new engine();
+        myEngine.showProgressDialog("Consultando", "Consultando fecha "+ fechaConsulta, MainActivityZoomPeluquero.this);
         final TableLayout tbLayout = findViewById(R.id.tbLayout);
         tbLayout.setStretchAllColumns(true);
 
@@ -632,7 +634,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
             @Override
             public void onResponse(String response) {
                 //Trae todas las reservas en esa fechay de ese barbero
-                hideProgressDialog();
+                myEngine.hideProgressDialog();
                 Log.e("Response ", response + response.equalsIgnoreCase("[]") +response.isEmpty());
                 if(response.equalsIgnoreCase("[]")){
                     // SI NO DEVUELVE NADA no hay reservas ese dia entonces dejo la tabla libre todo el dia
@@ -673,7 +675,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                hideProgressDialog();
+                myEngine.hideProgressDialog();
                 int count = tbLayout.getChildCount();
                 for (int i = 0; i < count; i++) {
                     View child = tbLayout.getChildAt(i);
@@ -719,13 +721,7 @@ public class MainActivityZoomPeluquero extends AppCompatActivity implements cuad
         Log.e("Datos reservas a bus", fechaConsulta + "  "+ telefono);
         request.add(stringRequest);
     }
-    ///Dialog Progress
-    private void showProgressDialog(String titulo,String mensaje){
-        progress = ProgressDialog.show(MainActivityZoomPeluquero.this, titulo,
-                mensaje, true);
-    }
 
-    private void  hideProgressDialog(){progress.dismiss();}
 
     private  void selectorDeOcupados(String hUnaReserva){
         //Recibe, recrea el combo y compara si la hora que recibe esta en la tabla

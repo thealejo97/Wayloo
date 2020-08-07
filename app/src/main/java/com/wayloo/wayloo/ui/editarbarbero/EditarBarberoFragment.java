@@ -39,6 +39,7 @@ import com.wayloo.wayloo.MainActivityProfile;
 import com.wayloo.wayloo.MainActivityZoomPeluquero;
 import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
+import com.wayloo.wayloo.ui.engine.engine;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -132,7 +133,7 @@ public class EditarBarberoFragment extends Fragment {
         pintar_dia(tvS);
         pintar_dia(tvD);
 
-       consultaDiasLaboralesBarbero(traerTelSQLITE());
+       consultaDiasLaboralesBarbero(new engine().getInternoTelSQLITE(getContext()));
         snHoraInicio = root.findViewById(R.id.horaI_spinner);
         snHoraFin = root.findViewById(R.id.horaF_spinner);
 
@@ -279,7 +280,7 @@ public class EditarBarberoFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parameters = new HashMap<String, String>();
-                parameters.put("telBarbero", traerTelSQLITE());
+                parameters.put("telBarbero", new engine().getInternoTelSQLITE(getContext()));
                 parameters.put("key", "barbero");
 
                 return parameters;
@@ -375,7 +376,7 @@ public class EditarBarberoFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parameters = new HashMap<String, String>();
-                parameters.put("telBarbero", traerTelSQLITE());
+                parameters.put("telBarbero", new engine().getInternoTelSQLITE(getContext()));
                 parameters.put("HI", horaI);
                 parameters.put("HF", horaF);
                 parameters.put("DIASN", dias_no);
@@ -404,7 +405,7 @@ public class EditarBarberoFragment extends Fragment {
                 Log.e("Response Update go ", response);
                 if(response.equalsIgnoreCase("ok")) {
                     Toast.makeText(getContext(), "Actualizado", Toast.LENGTH_SHORT).show();
-                    reiniciarApp();
+                    new engine().reiniciarApp(getContext());
                 }else{
                     Toast.makeText(getContext(), "Error Actualizando", Toast.LENGTH_SHORT).show();
                 }
@@ -420,7 +421,7 @@ public class EditarBarberoFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parameters = new HashMap<String, String>();
-                parameters.put("telBarbero", traerTelSQLITE());
+                parameters.put("telBarbero", new engine().getInternoTelSQLITE(getContext()));
 
                 return parameters;
             }
@@ -461,7 +462,7 @@ public class EditarBarberoFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> parameters = new HashMap<String, String>();
-                    parameters.put("telBarbero", traerTelSQLITE());
+                    parameters.put("telBarbero", new engine().getInternoTelSQLITE(getContext()));
                     parameters.put("HI", horaI);
                     parameters.put("HF", horaF);
                     parameters.put("dias_no", dias_no);
@@ -555,30 +556,6 @@ Log.e(" Cositas", snHoraInicio.getAdapter().getCount()+ " "+ jsonObject2.optStri
         request.add(stringRequest);
     }
 
-    private String traerTelSQLITE(){
 
-        //Creamos la BD
-        UsuariosSQLiteHelper usdbh =
-                new UsuariosSQLiteHelper(getContext(), "dbUsuarios", null, 1);
-        String name= "UnKnow User";
-        SQLiteDatabase db = usdbh.getWritableDatabase();
-        Cursor c = db.rawQuery(" SELECT id_usu FROM CurrentUsuario;", null);
-        if (c.moveToFirst()) {
-            //Recorremos el cursor hasta que no haya más registros
-            do {
-                name= c.getString(0);
-                Log.e("id en sqlite",name);
-            } while(c.moveToNext());
-        }
-        return name;
-    }
 
-    private void reiniciarApp() {
-        Intent mStartActivity = new Intent(getContext(), MainActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-        System.exit(0);
-    }
 }

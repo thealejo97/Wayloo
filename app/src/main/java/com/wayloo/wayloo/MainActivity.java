@@ -45,6 +45,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.wayloo.wayloo.R.id;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
+import com.wayloo.wayloo.ui.engine.engine;
 import com.wayloo.wayloo.ui.micronograma.MiCronogramaFragment;
 import com.wayloo.wayloo.ui.misReservas.MisReservasFragment;
 import com.wayloo.wayloo.ui.mispeluquerias.MisPeluqueriasFragment;
@@ -263,7 +264,7 @@ public class MainActivity extends AppCompatActivity  {
                 }
             });
 
-            actualizarRolUsuario(traerId_firebaseQLITE());
+            actualizarRolUsuario(traerId_firebaseQLITE());// Consulta y Actualiza el rol
     }
 
     private void actualizarRolUsuario(String frb) {
@@ -285,7 +286,7 @@ public class MainActivity extends AppCompatActivity  {
                     }else {
                         updateROLSQLITE(response, frb);
                         Toast.makeText(MainActivity.this, "Cambios detectados por favor reinicie la aplicación", Toast.LENGTH_SHORT).show();
-                        reiniciarApp();
+                        new engine().reiniciarApp(getApplicationContext());
                     }
                 }else{
                     Toast.makeText(MainActivity.this, "Error de conexión verifique su red.", Toast.LENGTH_SHORT).show();
@@ -313,12 +314,6 @@ public class MainActivity extends AppCompatActivity  {
         request.add(stringRequest);
 
 
-    }
-    private void reiniciarApp() {
-        Intent mStartActivity = new Intent(MainActivity.this, MainActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(MainActivity.this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        System.exit(0);
     }
 
 
@@ -399,7 +394,7 @@ public class MainActivity extends AppCompatActivity  {
         TextView etInferior = findViewById(R.id.etInferior);
         String rol= traerROLSQLITE();
         String textoInferior = "";
-        if(rol.equalsIgnoreCase("1")){
+        if(rol.equalsIgnoreCase("1") ){
             textoInferior = "Administrador";
         }else {
             if(rol.equalsIgnoreCase("2")){
@@ -408,6 +403,10 @@ public class MainActivity extends AppCompatActivity  {
             else{
                 if(rol.equalsIgnoreCase("3")){
                     textoInferior = "Cliente";
+                }else {
+                    if(rol.equalsIgnoreCase("4")){
+                        textoInferior = "Admin-Barbero";
+                    }
                 }
             };
         }

@@ -43,6 +43,7 @@ import com.wayloo.wayloo.MainActivity;
 import com.wayloo.wayloo.MainActivityZoomPeluquero;
 import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
+import com.wayloo.wayloo.ui.engine.engine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -214,7 +215,7 @@ public class barberoperfilFragment extends Fragment {
                 Log.e("Response Update go ", response);
                 if(response.equalsIgnoreCase("ok")) {
                     Toast.makeText(getContext(), "Actualizado", Toast.LENGTH_SHORT).show();
-                    reiniciarApp();
+                    new engine().reiniciarApp(getContext());
                 }else{
                     Toast.makeText(getContext(), "Error Actualizando", Toast.LENGTH_SHORT).show();
                 }
@@ -280,14 +281,7 @@ public class barberoperfilFragment extends Fragment {
 
     }
 */
-    private void reiniciarApp() {
-        Intent mStartActivity = new Intent(getContext(), MainActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-        System.exit(0);
-    }
+
 
     public void cargarWebImagen(final String id){
         showProgressDialog("Cargando ..","Por favor espere....");

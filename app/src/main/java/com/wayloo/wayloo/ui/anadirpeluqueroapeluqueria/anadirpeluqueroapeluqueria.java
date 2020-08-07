@@ -64,6 +64,7 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
     ProgressDialog progress;
     private Button btAnadir;
     EditText etCelular;
+    TextView tvSinResultados;
 
     public anadirpeluqueroapeluqueria() {
         // Required empty public constructor
@@ -88,6 +89,7 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
         View view= inflater.inflate(R.layout.fragment_anadirpeluqueroapeluqueria, container, false);
         listaClientes = new ArrayList<>();
         etCelular = view.findViewById(R.id.etTelefonoAnadir);
+        tvSinResultados = view.findViewById(R.id.sinResultados);
         recyclerBarberos = view.findViewById(R.id.idRecycleBarberosAgregar);
         recyclerBarberos.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerBarberos.setHasFixedSize(true);
@@ -133,6 +135,7 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
         progress.hide();
 
         Toast.makeText(getActivity(), "No se encontraron usuarios", Toast.LENGTH_SHORT).show();
+        tvSinResultados.setVisibility(View.VISIBLE);
     }
     @Override
     public void onResponse(JSONObject response) {//1er onresponse lista de todos barberos 1,2,3,4
@@ -147,8 +150,6 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
                 usuario=new cliente();
                 JSONObject jsonObject=null;
                 jsonObject=json.getJSONObject(i);
-
-
                 usuario.setNombre(jsonObject.optString("nombre_usuario"));
                 usuario.setApellido(jsonObject.optString("apellido_usuario"));
                 usuario.setTelefono(jsonObject.optString("tel_usuario"));
@@ -219,7 +220,7 @@ public class anadirpeluqueroapeluqueria extends Fragment implements com.android.
             progress.hide();
             clienteAdapters adapter = new clienteAdapters(listaClientes,getContext());
             recyclerBarberos.setAdapter(adapter);
-
+            tvSinResultados.setVisibility(View.GONE);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" +

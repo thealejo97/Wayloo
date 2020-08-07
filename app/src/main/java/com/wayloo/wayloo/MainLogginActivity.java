@@ -12,8 +12,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -108,10 +113,14 @@ public class MainLogginActivity extends AppCompatActivity {
 
             btnIniciarSesion=findViewById(R.id.buttonLogginNomal);
             btnRestablecer = findViewById(R.id.tvRestablecerContra);
-            loginButton = findViewById(R.id.buttonLoggin);
+            loginButton = findViewById(R.id.buttonLogginFacebook);
             etusu = findViewById(R.id.editUsuarioLoggin);
             etpw= findViewById(R.id.editTextPasswordLogin);
             txtRegistar = (TextView) findViewById(R.id.textViewRegistrar);
+            Spannable wordtoSpan = new SpannableString("¿Aún no estás registrado? Registrarme");
+            wordtoSpan.setSpan(new ForegroundColorSpan(Color.WHITE), 15, 30, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            txtRegistar.setText(wordtoSpan);
+
             /////////////////////////////////////////////// cuando doy click en iniciar sesion ///////////////////////////////////////////////
             btnIniciarSesion.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -264,6 +273,7 @@ public class MainLogginActivity extends AppCompatActivity {
                             hideProgressDialog();
                             Toast.makeText(MainLogginActivity.this, "Error, el usuario ha sido deshabilitado, Comuniquese con soporte.", Toast.LENGTH_LONG).show();
                         }else {
+                            Log.e("Creando sesion para", emaildeEseTelefon +" "+nombre_u);
                             //ahora si inicio la sesion con la contraseña
                             iniciarSesionUsuarioNormal(etusu.getText().toString(), etpw.getText().toString(), emaildeEseTelefon, IDFIre_u, nombre_u, rol_u);
                         }
@@ -341,6 +351,7 @@ public class MainLogginActivity extends AppCompatActivity {
                                     id_firebase = jsonObject2.optString("id_firebase");
                                     estadoUsu = jsonObject2.optString("estado");
                                     rol_u = jsonObject2.optString("rol_usuario");
+                                    emaildeEseTelefon = jsonObject2.optString("email_usuario");
                                 }
                                 hideProgressDialog();
                                 Log.e("Estado estado usu ", estadoUsu + "55");
@@ -351,6 +362,7 @@ public class MainLogginActivity extends AppCompatActivity {
                                     hideProgressDialog();
                                 } else {
                                     hideProgressDialog();
+                                    Log.e("Creando sesion para", emaildeEseTelefon +"  "+tel_usuario);
                                     salvarPermanente(id_firebase, nombre_fb, emaildeEseTelefon, rol_u, tel_usuario);
                                 }
 

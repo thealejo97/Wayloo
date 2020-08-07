@@ -18,16 +18,15 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.wayloo.wayloo.ui.engine.engine;
 
 import java.util.regex.Pattern;
 
 public class MainActivityCambiarClave extends AppCompatActivity {
     EditText etCorreo;
     Button cambiarPS;
-    private RequestQueue request;
     String CurrentFire;
     FirebaseAuth mAuth;
-    ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,43 +46,29 @@ public class MainActivityCambiarClave extends AppCompatActivity {
     }
 
     private void sendMailPassword(String email, String currentFire) {
-        showProgressDialog("Enviando Correo","Espere mientras se envia conrreo de verificación");
+        engine myEngine = new engine();
+        myEngine.showProgressDialog("Enviando Correo","Espere mientras se envia conrreo de verificación",MainActivityCambiarClave.this);
         if(validarEmail(email)){
             mAuth.setLanguageCode("es");
-/*
-            mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    hideProgressDialog();
-                    if(task.isSuccessful()){
-                        Toast.makeText(MainActivityCambiarClave.this, "Se ha enviado un correo para restablecer la contraseña", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Log.e("Email error sending",task.toString());
-                        Toast.makeText(MainActivityCambiarClave.this, "No se pudo enviar el correo de restablecimiento", Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            });
-*/
             mAuth.sendPasswordResetEmail(email)
                     .addOnSuccessListener(new OnSuccessListener() {
                         @Override
                         public void onSuccess(Object o) {
-                            hideProgressDialog();
+                            myEngine.hideProgressDialog();
                             Toast.makeText(MainActivityCambiarClave.this, "Se ha enviado un correo para restablecer la contraseña", Toast.LENGTH_SHORT).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
 
                 @Override
                 public void onFailure(@NonNull Exception e) {
-hideProgressDialog();
+                    myEngine.hideProgressDialog();
                     Log.e("Email error sending",e.toString());
                     Toast.makeText(MainActivityCambiarClave.this, "No se pudo enviar el correo de restablecimiento, revise el correo electronico.", Toast.LENGTH_SHORT).show();
                 }
 
         });
         }else{
-
+            myEngine.hideProgressDialog();
             Toast.makeText(this, "Error, debe de ingresar un correo valido.", Toast.LENGTH_LONG).show();
         }
     }
@@ -93,12 +78,5 @@ hideProgressDialog();
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
     }
-    ///Dialog Progress
-    private void showProgressDialog(String titulo,String mensaje){
-        progress = ProgressDialog.show(MainActivityCambiarClave.this, titulo,
-                mensaje, true);
-    }
-
-    private void  hideProgressDialog(){progress.dismiss();}
 
 }

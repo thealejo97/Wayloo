@@ -42,6 +42,9 @@
             android:textColor="@color/whiteText" />
 
         <EditText
+            android:drawableLeft="@drawable/phone"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_telefono"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,20 +52,24 @@
             android:digits="0123456789+"
             android:hint="@string/Teléfono"
             android:inputType="phone"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
+            android:textColor="#ffffff" />
 
         <EditText
+            android:drawableTint="@color/GRAY"
+            android:drawableLeft="@drawable/emailicon"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_emailComplete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:hint="@string/prompt_email"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
+            android:textColor="#ffffff" />
 
 
         <EditText
+            android:drawableLeft="@drawable/key"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -73,7 +80,6 @@
             android:hint="@string/Contraseña"
             android:inputType="textPassword"
             android:textColor="#ffffff"
-            android:textColorHint="#ffffff"
             app:layout_constraintTop_toTopOf="@+id/etxt_email"
             tools:layout_editor_absoluteX="-16dp" />
 
@@ -86,7 +92,6 @@
             android:entries="@array/citys_array"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff"
-
             />
 
 

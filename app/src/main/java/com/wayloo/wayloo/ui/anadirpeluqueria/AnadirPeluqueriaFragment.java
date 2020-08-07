@@ -33,6 +33,7 @@ import com.wayloo.wayloo.MainActivity;
 import com.wayloo.wayloo.MainActivityRegistarUser;
 import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
+import com.wayloo.wayloo.ui.engine.engine;
 import com.wayloo.wayloo.ui.mispeluquerias.MisPeluqueriasFragment;
 
 import java.util.ArrayList;
@@ -45,7 +46,6 @@ public class AnadirPeluqueriaFragment extends Fragment {
     EditText etNit,etNombre,EtDir,etTel;
     Spinner spCiud;
     Button btnRegistrarP;
-    ProgressDialog progress;
     StringRequest stringRequestS;
     private RequestQueue request;
     private AnadirPeluqueriaModel anadirPeluqueriaModel;
@@ -67,7 +67,7 @@ public class AnadirPeluqueriaFragment extends Fragment {
         btnRegistrarP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showProgressDialog("Añadiendo Peluqueria","Por favor espere....");
+
                 crearPeluqueria();
             }
         });
@@ -76,6 +76,8 @@ public class AnadirPeluqueriaFragment extends Fragment {
     }
 
     private void crearPeluqueria() {
+        engine myEngine = new engine();
+        myEngine.showProgressDialog("Añadiendo Peluqueria","Por favor espere....",getContext());
         //Saco los datos de Pluqueria escritos
         Nit = etNit.getText().toString();
         Nombre = etNombre.getText().toString();
@@ -97,7 +99,7 @@ public class AnadirPeluqueriaFragment extends Fragment {
 
                 @Override
                 public void onResponse(String response) {
-                    hideProgressDialog();
+                    myEngine.hideProgressDialog();
                     Log.e("RESPUESTA: ", "" + response);
                     if (response.trim().equalsIgnoreCase("Registraregistraregistra") || response.trim().equalsIgnoreCase("registra") ) {
                         Toast.makeText(getContext(), "Se ha la registrado la barberia con exito", Toast.LENGTH_SHORT).show();
@@ -121,9 +123,9 @@ public class AnadirPeluqueriaFragment extends Fragment {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
+                    myEngine.hideProgressDialog();
                     Log.e("RESPUESTA: ", "" + error);
                     Toast.makeText(getContext(), "No se ha podido conectar", Toast.LENGTH_SHORT).show();
-                    hideProgressDialog();
                 }
             }) {
                 @Override
@@ -150,7 +152,7 @@ public class AnadirPeluqueriaFragment extends Fragment {
         SQLiteDatabase db = usdbh.getReadableDatabase();
         db.execSQL("UPDATE CurrentUsuario SET  rol = '" + new_rol + "' ");
         Log.e("nuevo rol", traerRolSQLITE());
-        progress.dismiss();
+
     }
 
     private String traerTelSQLITE(){
@@ -232,10 +234,4 @@ public class AnadirPeluqueriaFragment extends Fragment {
         spCiud.setAdapter(ArraylistCiudadesFRFire);
     }
 
-    private void showProgressDialog(String titulo,String mensaje){
-        progress = ProgressDialog.show(getContext(), titulo,
-                mensaje, true);
-    }
-
-    private void  hideProgressDialog(){progress.dismiss();}
 }

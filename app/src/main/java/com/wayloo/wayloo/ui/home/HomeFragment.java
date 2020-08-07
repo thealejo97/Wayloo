@@ -26,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.adapters.UsuariosAdapters;
 import com.wayloo.wayloo.entidades.Usuario;
+import com.wayloo.wayloo.ui.engine.engine;
 import com.wayloo.wayloo.zoomBarberia;
 
 import org.json.JSONArray;
@@ -38,11 +39,9 @@ public class HomeFragment extends Fragment implements com.android.volley.Respons
 
     RecyclerView recyclerUsuarios;
     ArrayList<Usuario> listaUsuarios;
-
-    ProgressDialog progress;
-
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+    engine myEngine = new engine();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -70,12 +69,10 @@ public class HomeFragment extends Fragment implements com.android.volley.Respons
     }
 
     private void cargarWebServices() {
-        progress=new ProgressDialog(getContext());
-        progress.setMessage("Consultando Peluquerias");
-        progress.show();
+
+        myEngine.showProgressDialog("Consultando peluquerias","Espere",getContext());
         String ip =getString(R.string.ip_way);
         String url = ip+"/consultas/consultarListaUsuarios.php";
-
         jsonObjectRequest=new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
@@ -85,11 +82,12 @@ public class HomeFragment extends Fragment implements com.android.volley.Respons
     @Override
     public void onErrorResponse(VolleyError error) {
         Log.d("Error peluquerias",error.toString());
-        progress.hide();
+        myEngine.hideProgressDialog();
     }
 
     @Override
     public void onResponse(JSONObject response) {
+        myEngine.hideProgressDialog();
         Usuario usuario=null;
 
         JSONArray json=response.optJSONArray("peluquerias");
@@ -110,8 +108,6 @@ public class HomeFragment extends Fragment implements com.android.volley.Respons
                 listaUsuarios.add(usuario);
                 Log.e("Error", json.getJSONObject(i) +"");
             }
-            progress.hide();
-
 
             UsuariosAdapters adapter=new UsuariosAdapters(listaUsuarios, getContext());
             recyclerUsuarios.setAdapter(adapter);
@@ -168,6 +164,6 @@ public class HomeFragment extends Fragment implements com.android.volley.Respons
             e.printStackTrace();
             Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" +
                     " "+response, Toast.LENGTH_LONG).show();
-            progress.hide();
+            myEngine.hideProgressDialog();
         }}
     }

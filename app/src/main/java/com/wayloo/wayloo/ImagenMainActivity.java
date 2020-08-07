@@ -21,10 +21,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.wayloo.wayloo.ui.engine.engine;
 
 public class ImagenMainActivity extends AppCompatActivity {
     private RequestQueue request;
-    ProgressDialog progress;
     TouchImageView tImg;
 
     @Override
@@ -39,12 +39,13 @@ public class ImagenMainActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         String fire = intent.getStringExtra("imagen");
-        showProgressDialog("Cargando","Espere");
         cargarWebImagen(fire);
     }
 
     public void cargarWebImagen(String id) {
 
+        engine myEngine = new engine();
+        myEngine.showProgressDialog("Cargando","Por favor espere", ImagenMainActivity.this);
         String ip =getString(R.string.ip_way);
         String url = ip+"/consultas/imagenes/" + id + ".jpg";
         url = url.replace(" ", "%20");
@@ -60,16 +61,16 @@ public class ImagenMainActivity extends AppCompatActivity {
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
+                        myEngine.hideProgressDialog();
                         Log.e("Respondio", "respondio");
                         tImg.setImageBitmap(response);
-
-                        hideProgressDialog();
                     }
                 }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                myEngine.hideProgressDialog();
                 Toast.makeText(ImagenMainActivity.this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
-                hideProgressDialog();
+
             }
         });
         request.add(imageRequest);
@@ -122,12 +123,4 @@ public class ImagenMainActivity extends AppCompatActivity {
         return bitmap;
     }
 
-    private void showProgressDialog(String titulo, String mensaje) {
-        progress = ProgressDialog.show(ImagenMainActivity.this, titulo,
-                mensaje, true);
-    }
-
-    private void hideProgressDialog() {
-        progress.dismiss();
-    }
 }

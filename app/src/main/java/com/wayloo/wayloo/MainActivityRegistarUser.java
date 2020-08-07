@@ -69,6 +69,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.wayloo.wayloo.ui.engine.engine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -242,43 +243,7 @@ public class MainActivityRegistarUser extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-//  Se coloca el array de las ciudades dependiendo de las que esten en el FireBaseRemoteConfig
-        ArrayList<String> ArraylistCiudadesFRstr = new ArrayList<>();
-
-        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        firebaseRemoteConfig.setConfigSettings(new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(true).build());
-        HashMap<String, Object> defaultData = new HashMap<>();
-        defaultData.put("ciudadesAc","Cali,Jamundi");
-        defaultData.put("datosPruebaPapu","nadaa");
-        defaultData.put("playurl","Cali,Jamundi");
-        defaultData.put("versionname","1.0");
-
-        Task<Void> fetch = firebaseRemoteConfig.fetch(0);
-        fetch.addOnSuccessListener(MainActivityRegistarUser.this, aVoid ->{
-            firebaseRemoteConfig.activateFetched();
-            Log.e("Datos en fb",  "-"+firebaseRemoteConfig.getString("ciudadesAc") +"-");
-        }).addOnFailureListener(MainActivityRegistarUser.this, aVoid -> {
-            Log.e("Datos en fb",  "Fetch faild" );
-            Toast.makeText(MainActivityRegistarUser.this, "Fetch failed",
-                    Toast.LENGTH_SHORT).show();
-        });
-
-String prueba= (String)firebaseRemoteConfig.getString("ciudadesAc");
-Log.e("Prueba", prueba);
-        String[] ciudades = null;
-        ciudades=prueba.split(",");
-
-        for(int i = 0; i<ciudades.length; i++) {
-            Log.e("CiudadArr", ciudades[i]);
-            ArraylistCiudadesFRstr.add(ciudades[i]);
-            Log.e("Ciudad" + i, ciudades[i]);
-        }
-
-        ArrayAdapter ArraylistCiudadesFRFire = new ArrayAdapter(this,R.layout.color_spinner_layout, ArraylistCiudadesFRstr) ;
-        // Apply the adapter to the spinner*/
-        ArraylistCiudadesFRFire.setDropDownViewResource(R.layout.spinner_dropdown);
-        spinnerCiudad.setAdapter(ArraylistCiudadesFRFire);
+        new engine().ciudadesEnSpinner(MainActivityRegistarUser.this,spinnerCiudad);
     }
 
     private void abrirCamara() {
@@ -415,7 +380,7 @@ Log.e("Prueba", prueba);
                             public void onComplete(@NonNull Task<Void> task) {
                                 //Se envio el correo exitosamente
                                 //Escribir en 000
-                                registrarUsuario();
+                                registrarUsuarioBdExterna();
                                 //Login
                                 Toast.makeText(MainActivityRegistarUser.this, "Se ha enviado un correo de verificación", Toast.LENGTH_SHORT).show();
                             }
@@ -437,7 +402,7 @@ Log.e("Prueba", prueba);
         }
     }
 //Registra el usuario en la bd SQL Externa
-    private void registrarUsuario() {
+    private void registrarUsuarioBdExterna() {
 
         showProgressDialog("Registrando.... ", "Por favor espere... ");// Muestro el progress
         //Inicializo los atributos que voy a enviar a la bd

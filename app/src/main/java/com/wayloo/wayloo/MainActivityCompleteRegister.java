@@ -54,6 +54,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -338,7 +339,7 @@ public class MainActivityCompleteRegister extends AppCompatActivity {
                 hideProgressDialog();// Oculto el progress
                 Log.e("RESPUESTA SQL: ", "" + response); // imprimo la respuesta
                 // Si la respuesta del web service es que guardo
-                if (response.trim().equalsIgnoreCase("registradoregistrado")) {
+                if (response.trim().equalsIgnoreCase("registrado")) {
 
                     Toast.makeText(MainActivityCompleteRegister.this, "Verifique su correo para validar su usuario", Toast.LENGTH_SHORT).show();
                     //Guardo los datos en sqlite
@@ -352,8 +353,10 @@ public class MainActivityCompleteRegister extends AppCompatActivity {
                     //Si la respuesta del web service es error, no se pudo escribir en la 000webhost, entonces lo borro del fire
                     try {
                         Toast.makeText(MainActivityCompleteRegister.this, "No se ha registrado ", Toast.LENGTH_SHORT).show();
+                        LoginManager.getInstance().logOut();
                         deleteUserFirebase(email,Password);
                     } catch (Exception e) {
+                        Log.e("Error no se registrado", e.toString());
                         e.printStackTrace();
                     }
                 }

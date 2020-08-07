@@ -16,57 +16,74 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
+
         <ImageView
-            android:id="@+id/imageViewPrincipalFotoBar"
-            android:layout_width="150dp"
+            android:id="@+id/imageView2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            android:layout_height="150dp"
-            tools:srcCompat="@drawable/ic_logor" />
+            app:srcCompat="@drawable/store" />
+
         <EditText
+            android:drawableLeft="@drawable/description"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_PeluqueriaNitAnadir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:hint="NIT"
             android:inputType="number"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
+            android:textColor="#ffffff" />
 
         <EditText
+            android:drawableLeft="@drawable/people"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_PeluqueriaNombreAnadir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:hint="Nombre"
             android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
+            />
 
         <EditText
+            android:drawableLeft="@drawable/adress"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_peluqueriaDireccionAnadir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:hint="Direccion"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
+            android:textColor="#ffffff" />
 
         <EditText
+            android:drawableLeft="@drawable/phonefijo"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/etxt_PeluqueriaTelefonoAnadir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:hint="Telefono"
             android:inputType="number"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
+            android:textColor="#ffffff"/>
         <Spinner
+            android:drawableLeft="@drawable/phone"
+            android:drawablePadding="20dp"
+            android:drawableTint="@color/GRAY"
+            android:textColorHint="@color/GRAY"
             android:id="@+id/ciudad_spinnerAnadir"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:textColor="#ffffff"
-            android:textColorHint="#ffffff"
-
             />
         <Button
             android:id="@+id/btnAnadirPeluqueria"
@@ -75,6 +92,7 @@
             android:text=" Añadir peluqueria "
             android:layout_gravity="center"
             android:background="@drawable/shapes"></Button>
+
     </LinearLayout>
 
 

@@ -38,6 +38,7 @@ import com.wayloo.wayloo.R;
 import com.wayloo.wayloo.Utils;
 import com.wayloo.wayloo.ui.UsuariosSQLiteHelper;
 import com.wayloo.wayloo.ui.Utilidades;
+import com.wayloo.wayloo.ui.engine.engine;
 import com.wayloo.wayloo.ui.misReservas.MisReservasFragment;
 
 import org.json.JSONArray;
@@ -95,7 +96,7 @@ public class fragment_editar_reserva extends Fragment {
         btnEliminarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eliminarReserva(fechaR,HI, idBR, HF, idBR);
+                eliminarReserva(fechaR,HI, new engine().getInternoTelSQLITE(getContext()), HF, idBR);
             }
         });
         return root;
@@ -225,7 +226,7 @@ public class fragment_editar_reserva extends Fragment {
         return name;
     }
 
-    private void eliminarReserva(final String f_res,final String HI_re,final String idC_re, final String HF_re, final String idB_re ) {
+    private void eliminarReserva(final String f_res,final String HI_re,final String telC_re, final String HF_re, final String idB_re ) {
 
         final String[] idReservaG = {null};
         if (f_res.equalsIgnoreCase("")) {
@@ -303,15 +304,16 @@ public class fragment_editar_reserva extends Fragment {
                             Map<String, String> parameters = new HashMap<String, String>();
                             parameters.put("freserva", f_res);
                             parameters.put("hireserva", HI_re);
-                            parameters.put("idcreserva", idC_re);
                             parameters.put("hfreserva", HF_re);
+                            parameters.put("telClReserva", telC_re); //firebase
+                            parameters.put("fireBarbero", idB_re); //firebase
+
+
                             return parameters;
                         }
 
                     };
-                    Log.e("Datos a eliminar R", f_res +" "+ HI_re +" "+ idC_re+ " "+ idB_re);
-
-                    Log.e("datos de reserva", f_res + " " + HI_re + " " + HF_re + " " + idC_re + " " + idB_re);
+                    Log.e("Datos a eliminar R", f_res +" "+ HI_re +" "+ telC_re+ " "+ idB_re);
 
                     Date dateHReserva = convertirHoraADate(HI_re);
                     Date dateHActual = convertirHoraADate(getHora());
